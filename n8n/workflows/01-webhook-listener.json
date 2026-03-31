@@ -1,0 +1,77 @@
+{
+  "name": "01 - Webhook Listener",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "recoverly-payment-failed",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "İyzico Payment Failed",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.event_type}}",
+              "operation": "contains",
+              "value2": "payment_failed"
+            }
+          ]
+        }
+      },
+      "id": "check-event-type",
+      "name": "Is Payment Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "workflowId": "={{ $workflow.id.replace('01', '02') }}",
+        "workflowInputs": {
+          "values": [
+            { "name": "org_id", "value": "={{$json.org_id}}" },
+            { "name": "event_id", "value": "={{$json.event_id}}" },
+            { "name": "customer_id", "value": "={{$json.customer_id}}" },
+            { "name": "amount", "value": "={{$json.amount}}" },
+            { "name": "currency", "value": "={{$json.currency}}" },
+            { "name": "failure_code", "value": "={{$json.failure_code}}" }
+          ]
+        }
+      },
+      "id": "trigger-recovery",
+      "name": "Trigger Recovery Workflow",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [650, 250]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"received\": true}"
+      },
+      "id": "respond",
+      "name": "Respond 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "İyzico Payment Failed": { "main": [[{ "node": "Is Payment Failed?", "type": "main", "index": 0 }]] },
+    "Is Payment Failed?": {
+      "main": [
+        [{ "node": "Trigger Recovery Workflow", "type": "main", "index": 0 }],
+        [{ "node": "Respond 200", "type": "main", "index": 0 }]
+      ]
+    },
+    "Trigger Recovery Workflow": { "main": [[{ "node": "Respond 200", "type": "main", "index": 0 }]] }
+  }
+}

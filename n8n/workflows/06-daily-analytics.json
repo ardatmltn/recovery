@@ -1,0 +1,41 @@
+{
+  "name": "06 - Daily Analytics",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "hours", "hoursInterval": 24, "triggerAtHour": 1 }] }
+      },
+      "id": "cron",
+      "name": "Daily at 1am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id FROM organizations WHERE plan_status IN ('active', 'trialing')"
+      },
+      "id": "get-orgs",
+      "name": "Get Active Orgs",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO daily_analytics (org_id, date, total_failed_amount, total_recovered_amount, total_failed_count, total_recovered_count, recovery_rate, retry_success_count, email_success_count, sms_success_count) SELECT '{{$json.id}}', CURRENT_DATE - 1, COALESCE(SUM(CASE WHEN status != 'ignored' THEN amount ELSE 0 END), 0), COALESCE(SUM(CASE WHEN status = 'recovered' THEN amount ELSE 0 END), 0), COUNT(*) FILTER (WHERE status != 'ignored'), COUNT(*) FILTER (WHERE status = 'recovered'), CASE WHEN COUNT(*) FILTER (WHERE status != 'ignored') > 0 THEN ROUND(COUNT(*) FILTER (WHERE status = 'recovered')::numeric / COUNT(*) FILTER (WHERE status != 'ignored') * 100, 2) ELSE 0 END, (SELECT COUNT(*) FROM recovery_attempts WHERE org_id = '{{$json.id}}' AND type = 'auto_retry' AND status = 'succeeded' AND DATE(executed_at) = CURRENT_DATE - 1), (SELECT COUNT(*) FROM recovery_attempts WHERE org_id = '{{$json.id}}' AND type = 'email' AND status = 'succeeded' AND DATE(executed_at) = CURRENT_DATE - 1), (SELECT COUNT(*) FROM recovery_attempts WHERE org_id = '{{$json.id}}' AND type = 'sms' AND status = 'succeeded' AND DATE(executed_at) = CURRENT_DATE - 1) FROM payment_events WHERE org_id = '{{$json.id}}' AND DATE(created_at) = CURRENT_DATE - 1 ON CONFLICT (org_id, date) DO UPDATE SET total_failed_amount = EXCLUDED.total_failed_amount, total_recovered_amount = EXCLUDED.total_recovered_amount, total_failed_count = EXCLUDED.total_failed_count, total_recovered_count = EXCLUDED.total_recovered_count, recovery_rate = EXCLUDED.recovery_rate, retry_success_count = EXCLUDED.retry_success_count, email_success_count = EXCLUDED.email_success_count, sms_success_count = EXCLUDED.sms_success_count"
+      },
+      "id": "upsert-analytics",
+      "name": "Upsert Daily Analytics",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Daily at 1am": { "main": [[{ "node": "Get Active Orgs", "type": "main", "index": 0 }]] },
+    "Get Active Orgs": { "main": [[{ "node": "Upsert Daily Analytics", "type": "main", "index": 0 }]] }
+  }
+}

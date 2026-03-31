@@ -1,0 +1,72 @@
+{
+  "name": "03 - Scheduled Executor",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "minutes", "minutesInterval": 15 }] }
+      },
+      "id": "cron",
+      "name": "Every 15 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ra.*, pe.amount, pe.currency, pe.provider_payment_id, pe.provider_reference_code, c.email as customer_email, c.name as customer_name FROM recovery_attempts ra JOIN payment_events pe ON pe.id = ra.payment_event_id LEFT JOIN customers c ON c.id = ra.customer_id WHERE ra.status = 'scheduled' AND ra.scheduled_at <= NOW() LIMIT 50"
+      },
+      "id": "get-pending-attempts",
+      "name": "Get Pending Attempts",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            { "value1": "={{$json.type}}", "operation": "equal", "value2": "auto_retry" }
+          ]
+        }
+      },
+      "id": "route-by-type",
+      "name": "Route by Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "workflowId": "WORKFLOW_04_ID",
+        "workflowInputs": { "values": [{ "name": "attempt", "value": "={{$json}}" }] }
+      },
+      "id": "trigger-email",
+      "name": "Trigger Email Sender",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "workflowId": "WORKFLOW_05_ID",
+        "workflowInputs": { "values": [{ "name": "attempt", "value": "={{$json}}" }] }
+      },
+      "id": "trigger-sms",
+      "name": "Trigger SMS Sender",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [850, 400]
+    }
+  ],
+  "connections": {
+    "Every 15 Minutes": { "main": [[{ "node": "Get Pending Attempts", "type": "main", "index": 0 }]] },
+    "Get Pending Attempts": { "main": [[{ "node": "Route by Type", "type": "main", "index": 0 }]] },
+    "Route by Type": {
+      "main": [
+        [{ "node": "Trigger Email Sender", "type": "main", "index": 0 }],
+        [{ "node": "Trigger SMS Sender", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}

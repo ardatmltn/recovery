@@ -1,0 +1,65 @@
+{
+  "name": "02 - Recovery Initiator",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT rs.* FROM recovery_sequences rs WHERE rs.org_id = '{{$json.org_id}}' AND rs.is_default = true AND rs.is_active = true LIMIT 1"
+      },
+      "id": "get-default-sequence",
+      "name": "Get Default Sequence",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const sequence = $input.first().json;\nconst steps = JSON.parse(sequence.steps || '[]');\nconst orgId = $('Start').first().json.org_id;\nconst eventId = $('Start').first().json.event_id;\nconst customerId = $('Start').first().json.customer_id;\n\nconst now = new Date();\nconst attempts = steps.map(step => ({\n  org_id: orgId,\n  payment_event_id: eventId,\n  customer_id: customerId,\n  sequence_id: sequence.id,\n  template_id: step.template_id || null,\n  step_number: step.step,\n  type: step.type === 'retry' ? 'auto_retry' : step.type,\n  status: 'scheduled',\n  scheduled_at: new Date(now.getTime() + step.delay_hours * 3600000).toISOString(),\n}));\n\nreturn attempts;"
+      },
+      "id": "prepare-attempts",
+      "name": "Prepare Recovery Attempts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "recovery_attempts",
+        "columns": "org_id,payment_event_id,customer_id,sequence_id,template_id,step_number,type,status,scheduled_at"
+      },
+      "id": "insert-attempts",
+      "name": "Insert Recovery Attempts",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "payment_events",
+        "updateKey": "id",
+        "columns": "status"
+      },
+      "id": "update-event-status",
+      "name": "Mark Event as Processing",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Start": { "main": [[{ "node": "Get Default Sequence", "type": "main", "index": 0 }]] },
+    "Get Default Sequence": { "main": [[{ "node": "Prepare Recovery Attempts", "type": "main", "index": 0 }]] },
+    "Prepare Recovery Attempts": { "main": [[{ "node": "Insert Recovery Attempts", "type": "main", "index": 0 }]] },
+    "Insert Recovery Attempts": { "main": [[{ "node": "Mark Event as Processing", "type": "main", "index": 0 }]] }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "name": "05 - SMS Sender",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT body FROM message_templates WHERE id = '{{$json.attempt.template_id}}'"
+      },
+      "id": "get-template",
+      "name": "Get SMS Template",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const template = $input.first().json;\nconst attempt = $('Start').first().json.attempt;\n\nlet body = template.body;\nconst vars = {\n  '{{customer_name}}': attempt.customer_name || 'Hi',\n  '{{amount}}': `$${(attempt.amount / 100).toFixed(2)}`,\n};\nObject.entries(vars).forEach(([k, v]) => { body = body.replaceAll(k, v); });\n\nreturn [{ json: { body: body.slice(0, 160), to: attempt.customer_phone || '', attempt_id: attempt.id } }];"
+      },
+      "id": "prepare-sms",
+      "name": "Prepare SMS",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "accountSid": "={{$env.TWILIO_ACCOUNT_SID}}",
+        "authToken": "={{$env.TWILIO_AUTH_TOKEN}}",
+        "from": "={{$env.TWILIO_PHONE_NUMBER}}",
+        "to": "={{$json.to}}",
+        "message": "={{$json.body}}"
+      },
+      "id": "send-sms",
+      "name": "Send via Twilio",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "recovery_attempts",
+        "updateKey": "id",
+        "columns": "status,executed_at"
+      },
+      "id": "update-attempt",
+      "name": "Mark Attempt Sent",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Start": { "main": [[{ "node": "Get SMS Template", "type": "main", "index": 0 }]] },
+    "Get SMS Template": { "main": [[{ "node": "Prepare SMS", "type": "main", "index": 0 }]] },
+    "Prepare SMS": { "main": [[{ "node": "Send via Twilio", "type": "main", "index": 0 }]] },
+    "Send via Twilio": { "main": [[{ "node": "Mark Attempt Sent", "type": "main", "index": 0 }]] }
+  }
+}

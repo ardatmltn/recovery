@@ -1,0 +1,69 @@
+{
+  "name": "04 - Email Sender",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM message_templates WHERE id = '{{$json.attempt.template_id}}'"
+      },
+      "id": "get-template",
+      "name": "Get Template",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const template = $input.first().json;\nconst attempt = $('Start').first().json.attempt;\n\n// Replace template variables\nlet subject = template.subject || 'Action required: Payment failed';\nlet body = template.body;\n\nconst vars = {\n  '{{customer_name}}': attempt.customer_name || 'Valued Customer',\n  '{{amount}}': `$${(attempt.amount / 100).toFixed(2)}`,\n  '{{failure_reason}}': attempt.failure_code || 'card declined',\n};\n\nObject.entries(vars).forEach(([key, val]) => {\n  subject = subject.replaceAll(key, val);\n  body = body.replaceAll(key, val);\n});\n\nreturn [{ json: { subject, body, to: attempt.customer_email, attempt_id: attempt.id } }];"
+      },
+      "id": "prepare-email",
+      "name": "Prepare Email Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "apiKey",
+        "fromEmail": "={{$env.RESEND_FROM_EMAIL}}",
+        "toEmail": "={{$json.to}}",
+        "subject": "={{$json.subject}}",
+        "emailType": "html",
+        "message": "={{$json.body}}"
+      },
+      "id": "send-email",
+      "name": "Send via Resend",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "recovery_attempts",
+        "updateKey": "id",
+        "columns": "status,executed_at",
+        "additionalFields": {}
+      },
+      "id": "update-attempt",
+      "name": "Mark Attempt Sent",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Start": { "main": [[{ "node": "Get Template", "type": "main", "index": 0 }]] },
+    "Get Template": { "main": [[{ "node": "Prepare Email Content", "type": "main", "index": 0 }]] },
+    "Prepare Email Content": { "main": [[{ "node": "Send via Resend", "type": "main", "index": 0 }]] },
+    "Send via Resend": { "main": [[{ "node": "Mark Attempt Sent", "type": "main", "index": 0 }]] }
+  }
+}
