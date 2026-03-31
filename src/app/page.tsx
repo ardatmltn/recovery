@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { GlowyWavesHero } from '@/components/ui/glowy-waves-hero-shadcnui'
+import { BackgroundPaths } from '@/components/ui/background-paths'
 import { Zap, TrendingUp, Mail, RefreshCw, BarChart3, Shield } from 'lucide-react'
 
 export default function LandingPage() {
@@ -24,8 +24,8 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero — glowy waves */}
-      <GlowyWavesHero />
+      {/* Hero */}
+      <BackgroundPaths title="Recover Failed Payments" />
 
       {/* Features */}
       <section className="max-w-6xl mx-auto px-4 py-20">
