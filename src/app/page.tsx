@@ -1,14 +1,14 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
+import { GlowyWavesHero } from '@/components/ui/glowy-waves-hero-shadcnui'
 import { Zap, TrendingUp, Mail, RefreshCw, BarChart3, Shield } from 'lucide-react'
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
-      <nav className="border-b">
+      <nav className="absolute top-0 left-0 right-0 z-50 border-b border-border/20 bg-background/60 backdrop-blur">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 bg-primary rounded-md flex items-center justify-center">
@@ -24,23 +24,8 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="max-w-6xl mx-auto px-4 py-24 text-center">
-        <Badge variant="secondary" className="mb-6">Payment Recovery Automation</Badge>
-        <h1 className="text-5xl font-bold tracking-tight mb-6">
-          Recover 25% of your<br />
-          <span className="text-primary">failed payments</span> automatically
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-          Recoverly automatically retries failed payments, sends personalized emails,
-          and follows up at the right time — so you get paid without lifting a finger.
-        </p>
-        <div className="flex items-center justify-center gap-4">
-          <Link href="/register"><Button size="lg">Start free trial</Button></Link>
-          <Link href="/pricing"><Button variant="outline" size="lg">See pricing</Button></Link>
-        </div>
-        <p className="text-sm text-muted-foreground mt-4">No credit card required · 14-day free trial</p>
-      </section>
+      {/* Hero — glowy waves */}
+      <GlowyWavesHero />
 
       {/* Features */}
       <section className="max-w-6xl mx-auto px-4 py-20">
@@ -64,14 +49,6 @@ export default function LandingPage() {
               </CardContent>
             </Card>
           ))}
-        </div>
-      </section>
-
-      {/* Social proof */}
-      <section className="bg-muted/50 py-20">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <p className="text-4xl font-bold mb-3">$0 → $9,900 MRR</p>
-          <p className="text-muted-foreground">Our target: 100 customers recovering payments on autopilot</p>
         </div>
       </section>
 
