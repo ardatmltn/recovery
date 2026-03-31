@@ -69,6 +69,7 @@ export default function PricingPage() {
             <span className="font-bold text-lg">Recoverly</span>
           </Link>
           <div className="flex items-center gap-4">
+            <ModalPricing />
             <Link href="/login"><Button variant="outline" size="sm">Sign in</Button></Link>
             <Link href="/register"><Button size="sm">Get started</Button></Link>
           </div>
@@ -114,12 +115,6 @@ export default function PricingPage() {
               </CardContent>
             </Card>
           ))}
-        </div>
-
-        <div className="mt-16 text-center border-t pt-16">
-          <h2 className="text-2xl font-bold mb-2">Already a customer?</h2>
-          <p className="text-muted-foreground mb-8">Upgrade or change your plan at any time.</p>
-          <ModalPricing />
         </div>
 
         <div className="mt-16 text-center">
