@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { ModalPricing } from '@/components/ui/modal-pricing'
 import { Check, Zap } from 'lucide-react'
 
 const PLANS = [
@@ -113,6 +114,12 @@ export default function PricingPage() {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="mt-16 text-center border-t pt-16">
+          <h2 className="text-2xl font-bold mb-2">Already a customer?</h2>
+          <p className="text-muted-foreground mb-8">Upgrade or change your plan at any time.</p>
+          <ModalPricing />
         </div>
 
         <div className="mt-16 text-center">
