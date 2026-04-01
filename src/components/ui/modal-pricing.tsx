@@ -5,10 +5,8 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogFooter,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Check, Sparkles, Zap } from 'lucide-react'
 
@@ -44,88 +42,74 @@ const recoverlyPlans: PlanOption[] = [
   },
 ]
 
-function ModalPricing({
-  plans = recoverlyPlans,
-}: {
-  plans?: PlanOption[]
-}) {
+function ModalPricing({ plans = recoverlyPlans }: { plans?: PlanOption[] }) {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState('growth')
 
   return (
     <>
-      <div className="flex justify-center">
-        <Button
-          onClick={() => setIsOpen(true)}
-          className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
-        >
-          <Sparkles className="w-4 h-4 mr-2" />
-          Upgrade Plan
-        </Button>
-      </div>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="inline-flex items-center gap-2 px-4 py-2 border border-zinc-700 hover:border-zinc-500 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-300 hover:text-white text-sm font-medium rounded-full transition-all duration-200"
+      >
+        <Sparkles className="w-3.5 h-3.5 text-green-400" />
+        Upgrade Plan
+      </button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent
-          showCloseButton={false}
-          className="sm:max-w-[425px] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800"
+          showCloseButton
+          className="sm:max-w-[460px] bg-zinc-950 border border-zinc-800 p-0 overflow-hidden ring-0"
         >
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl font-semibold text-zinc-900 dark:text-white">
-              <Zap className="h-5 w-5 text-zinc-900 dark:text-white" />
+          <DialogHeader className="px-6 pt-6 pb-0">
+            <DialogTitle className="flex items-center gap-2 text-white font-display font-bold text-lg">
+              <div className="w-7 h-7 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center justify-center">
+                <Zap className="h-3.5 w-3.5 text-green-400" />
+              </div>
               Choose Your Plan
             </DialogTitle>
-            <p className="text-sm text-zinc-600 dark:text-zinc-300">
-              Select the perfect plan for your needs. Upgrade or downgrade at any time.
+            <p className="text-zinc-500 text-sm mt-1.5">
+              Upgrade or downgrade at any time. Changes apply immediately.
             </p>
           </DialogHeader>
 
           <RadioGroup
             defaultValue={selectedPlan}
             onValueChange={setSelectedPlan}
-            className="gap-4 py-4"
+            className="flex flex-col gap-2 px-6 py-5"
           >
             {plans.map((plan) => (
               <label
                 key={plan.id}
-                className={`relative flex flex-col p-4 cursor-pointer rounded-xl border-2 transition-all
-                  ${
-                    selectedPlan === plan.id
-                      ? 'border-zinc-900 bg-zinc-50 dark:border-white dark:bg-zinc-800/50'
-                      : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
-                  }`}
+                className={`relative flex flex-col p-4 cursor-pointer rounded-xl border transition-all duration-150 ${
+                  selectedPlan === plan.id
+                    ? 'border-green-500/40 bg-green-500/[0.04]'
+                    : 'border-zinc-800 hover:border-zinc-700 bg-zinc-900/40'
+                }`}
               >
                 <RadioGroupItem value={plan.id} className="sr-only" />
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-2.5">
                   <div>
-                    <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
-                      {plan.name}
-                    </h3>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                      {plan.description}
-                    </p>
+                    <h3 className="text-sm font-semibold text-white">{plan.name}</h3>
+                    <p className="text-xs text-zinc-500 mt-0.5">{plan.description}</p>
                   </div>
-                  <div className="flex items-baseline">
-                    <span className="text-2xl font-bold text-zinc-900 dark:text-white">
-                      {plan.price}
-                    </span>
-                    <span className="ml-1 text-zinc-500 dark:text-zinc-400">/mo</span>
+                  <div className="flex items-baseline gap-0.5 shrink-0 ml-4">
+                    <span className="font-display font-black text-white text-xl">{plan.price}</span>
+                    <span className="text-zinc-500 text-[11px]">/mo</span>
                   </div>
                 </div>
-                <ul className="space-y-2 mt-4">
-                  {plan.features.map((feature, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center text-sm text-zinc-600 dark:text-zinc-300"
-                    >
-                      <Check className="w-4 h-4 mr-2 text-zinc-900 dark:text-white" />
+                <ul className="space-y-1.5">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-center gap-2 text-xs text-zinc-400">
+                      <Check className="w-3 h-3 text-green-500 shrink-0" />
                       {feature}
                     </li>
                   ))}
                 </ul>
                 {selectedPlan === plan.id && (
                   <div className="absolute -top-2 -right-2">
-                    <span className="flex h-4 w-4 items-center justify-center rounded-full bg-zinc-900 dark:bg-white">
-                      <Check className="h-3 w-3 text-white dark:text-zinc-900" />
+                    <span className="flex h-4 w-4 items-center justify-center rounded-full bg-green-500">
+                      <Check className="h-2.5 w-2.5 text-black" />
                     </span>
                   </div>
                 )}
@@ -133,21 +117,20 @@ function ModalPricing({
             ))}
           </RadioGroup>
 
-          <DialogFooter className="flex flex-col gap-2 border-t-0 bg-transparent p-0 pb-0">
-            <Button
+          <div className="px-6 pb-6 space-y-2">
+            <button
               onClick={() => setIsOpen(false)}
-              className="w-full bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
+              className="w-full py-3 bg-green-500 hover:bg-green-400 text-black font-semibold rounded-full text-sm transition-all shadow-[0_0_24px_rgba(34,197,94,0.15)] hover:shadow-[0_0_32px_rgba(34,197,94,0.28)] hover:-translate-y-0.5"
             >
-              Confirm Selection
-            </Button>
-            <Button
-              variant="ghost"
+              Confirm selection
+            </button>
+            <button
               onClick={() => setIsOpen(false)}
-              className="w-full text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+              className="w-full py-3 text-zinc-500 hover:text-zinc-300 text-sm transition-colors"
             >
               Cancel
-            </Button>
-          </DialogFooter>
+            </button>
+          </div>
         </DialogContent>
       </Dialog>
     </>
