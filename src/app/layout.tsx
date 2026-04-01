@@ -3,6 +3,7 @@ import localFont from 'next/font/local'
 import { Outfit } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils'
+import { LanguageProvider } from '@/lib/language-context'
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -31,7 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={cn(outfit.variable, geistSans.variable, geistMono.variable)}>
       <body className={cn('antialiased', geistSans.className)}>
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   )
