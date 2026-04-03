@@ -2,12 +2,12 @@ export const dynamic = 'force-dynamic'
 
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { Header } from '@/components/dashboard/header'
-import { DottedSurface } from '@/components/ui/dotted-surface'
+import { DottedSurfaceClient } from '@/components/ui/dotted-surface-client'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="dark relative flex h-screen overflow-hidden bg-[#09090B]">
-      <DottedSurface />
+      <DottedSurfaceClient />
       <div className="relative z-10 flex h-full w-full overflow-hidden">
         <Sidebar />
         <div className="flex flex-col flex-1 overflow-hidden">

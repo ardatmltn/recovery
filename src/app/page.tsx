@@ -6,7 +6,8 @@ import { MarketingNav } from '@/components/marketing/nav'
 import { RefreshCw, Mail, TrendingUp, BarChart3, Shield, Zap } from 'lucide-react'
 import { useLanguage } from '@/lib/language-context'
 import { translations } from '@/components/marketing/translations'
-import { DottedSurface } from '@/components/ui/dotted-surface'
+import dynamic from 'next/dynamic'
+const DottedSurface = dynamic(() => import('@/components/ui/dotted-surface').then(m => ({ default: m.DottedSurface })), { ssr: false })
 
 const featureIcons = [RefreshCw, Mail, TrendingUp, BarChart3, Shield]
 
