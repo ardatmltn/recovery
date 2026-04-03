@@ -48,8 +48,8 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
         const x = ix * SEPARATION - (AMOUNTX * SEPARATION) / 2
         const z = iy * SEPARATION - (AMOUNTY * SEPARATION) / 2
         positions.push(x, 0, z)
-        // dark theme: subtle green-tinted dots
-        colors.push(34 / 255, 197 / 255, 94 / 255)
+        // white dots like original
+        colors.push(200 / 255, 200 / 255, 200 / 255)
       }
     }
 
@@ -57,10 +57,10 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3))
 
     const material = new THREE.PointsMaterial({
-      size: 5,
+      size: 8,
       vertexColors: true,
       transparent: true,
-      opacity: 0.25,
+      opacity: 0.7,
       sizeAttenuation: true,
     })
 
@@ -125,7 +125,8 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
   return (
     <div
       ref={containerRef}
-      className={cn('pointer-events-none fixed inset-0 -z-10', className)}
+      className={cn('pointer-events-none fixed inset-0', className)}
+      style={{ zIndex: -1 }}
       {...props}
     />
   )

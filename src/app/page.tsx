@@ -15,7 +15,7 @@ export default function LandingPage() {
   const tx = translations[lang]
 
   return (
-    <div className="bg-[#09090B] min-h-[100dvh]">
+    <div className="min-h-[100dvh]" style={{ background: '#09090B' }}>
       <DottedSurface />
       <MarketingNav />
       <Hero />
