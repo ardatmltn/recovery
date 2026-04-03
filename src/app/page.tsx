@@ -7,6 +7,7 @@ import { RefreshCw, Mail, TrendingUp, BarChart3, Shield, Zap } from 'lucide-reac
 import { useLanguage } from '@/lib/language-context'
 import { translations } from '@/components/marketing/translations'
 import dynamic from 'next/dynamic'
+import { Testimonials } from '@/components/marketing/testimonials'
 const DottedSurface = dynamic(() => import('@/components/ui/dotted-surface').then(m => ({ default: m.DottedSurface })), { ssr: false })
 
 const featureIcons = [RefreshCw, Mail, TrendingUp, BarChart3, Shield]
@@ -105,6 +106,8 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      <Testimonials />
 
       {/* CTA */}
       <section className="py-28">
