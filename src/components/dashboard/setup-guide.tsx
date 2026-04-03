@@ -63,7 +63,7 @@ export function SetupGuide({ iyzicoConnected, n8nConfigured }: Props) {
                   const res = await fetch('/api/test/payment', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ amount: 19990, currency: 'TRY' }),
+                    body: JSON.stringify({ amount: 9900, currency: 'usd' }),
                   })
                   const json = await res.json()
                   if (json.success) {

@@ -53,7 +53,7 @@ export default async function DashboardPage() {
 
   const metrics = [
     {
-      label: 'RECOVERED REVENUE',
+      label: 'Recovered Revenue',
       value: formatCurrency(totalRecovered),
       sub: 'Last 30 days',
       icon: DollarSign,
@@ -64,7 +64,7 @@ export default async function DashboardPage() {
       trend: null,
     },
     {
-      label: 'RECOVERY RATE',
+      label: 'Recovery Rate',
       value: `${recoveryRate}%`,
       sub: 'Of failed payments',
       icon: TrendingUp,
@@ -75,7 +75,7 @@ export default async function DashboardPage() {
       trend: null,
     },
     {
-      label: 'ACTIVE FAILURES',
+      label: 'Active Failures',
       value: String(activeFailures ?? 0),
       sub: 'Needs attention',
       icon: AlertCircle,
@@ -86,7 +86,7 @@ export default async function DashboardPage() {
       trend: null,
     },
     {
-      label: 'AT-RISK AMOUNT',
+      label: 'At-Risk Amount',
       value: formatCurrency(totalFailed),
       sub: 'Unrecovered',
       icon: Activity,
@@ -126,17 +126,17 @@ export default async function DashboardPage() {
             </div>
 
             {/* Value */}
-            <p className="text-2xl font-bold text-white tracking-tight leading-none mb-1">
+            <p className="text-3xl font-bold text-white tracking-tight leading-none mb-2">
               {value}
             </p>
 
             {/* Label */}
-            <p className="text-[10px] font-semibold tracking-widest text-zinc-500 uppercase mb-0.5">
+            <p className="text-xs font-semibold tracking-wider text-zinc-300 mb-0.5">
               {label}
             </p>
 
             {/* Sub */}
-            <p className="text-xs text-zinc-600">{sub}</p>
+            <p className="text-xs text-zinc-500">{sub}</p>
           </div>
         ))}
       </div>
