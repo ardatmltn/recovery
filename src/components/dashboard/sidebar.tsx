@@ -54,7 +54,7 @@ export function Sidebar() {
       )}
     >
       {/* Logo */}
-      <div className="h-14 flex items-center gap-2.5 px-[18px] border-b border-zinc-800 overflow-hidden">
+      <Link href="/" className="h-14 flex items-center gap-2.5 px-[18px] border-b border-zinc-800 overflow-hidden hover:bg-zinc-900 transition-colors">
         <div className="w-6 h-6 bg-green-500 rounded-md flex items-center justify-center shrink-0">
           <Zap className="w-3.5 h-3.5 text-black" />
         </div>
@@ -63,7 +63,7 @@ export function Sidebar() {
             Recoverly
           </span>
         )}
-      </div>
+      </Link>
 
       {/* Nav */}
       <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-hidden">
@@ -98,10 +98,16 @@ export function Sidebar() {
       {/* Plan badge */}
       {open && (
         <div className="px-3 pb-2">
-          <div className="px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800">
+          <Link
+            href="/pricing"
+            className="block px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800 transition-colors group"
+          >
             <p className="text-zinc-500 text-[10px] uppercase tracking-widest mb-0.5">Plan</p>
-            <p className="text-white text-xs font-semibold">Starter</p>
-          </div>
+            <div className="flex items-center justify-between">
+              <p className="text-white text-xs font-semibold">Starter</p>
+              <span className="text-green-500 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity">Upgrade →</span>
+            </div>
+          </Link>
         </div>
       )}
 
