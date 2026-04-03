@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
     .from('customers')
     .insert({
       org_id: orgId,
-      provider: 'iyzico',
       provider_customer_id: providerCustomerId,
       name: 'Test Customer',
       email: 'test@example.com',
@@ -49,14 +48,14 @@ export async function POST(req: NextRequest) {
     .insert({
       org_id: orgId,
       customer_id: customer.id,
-      provider: 'iyzico',
       provider_event_id: providerEventId,
       event_type: 'payment_failed',
       amount,
       currency,
       status: 'new',
-      failure_reason: 'Simulated failure — insufficient funds',
-      raw_payload: { simulated: true, amount, currency },
+      failure_code: 'insufficient_funds',
+      failure_message: 'Simulated failure — insufficient funds',
+      raw_data: { simulated: true, amount, currency },
     })
     .select()
     .single()
