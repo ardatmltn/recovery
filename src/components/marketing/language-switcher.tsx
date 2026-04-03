@@ -22,8 +22,7 @@ export function LanguageSwitcher() {
               : 'text-zinc-500 hover:text-zinc-300'
           }`}
         >
-          <span className="text-sm leading-none">{flags[l].emoji}</span>
-          {flags[l].label}
+          <span className="text-base leading-none">{flags[l].emoji}</span>
         </button>
       ))}
     </div>
