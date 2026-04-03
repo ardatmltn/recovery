@@ -6,6 +6,7 @@ import { MarketingNav } from '@/components/marketing/nav'
 import { RefreshCw, Mail, TrendingUp, BarChart3, Shield, Zap } from 'lucide-react'
 import { useLanguage } from '@/lib/language-context'
 import { translations } from '@/components/marketing/translations'
+import { DottedSurface } from '@/components/ui/dotted-surface'
 
 const featureIcons = [RefreshCw, Mail, TrendingUp, BarChart3, Shield]
 
@@ -15,6 +16,7 @@ export default function LandingPage() {
 
   return (
     <div className="bg-[#09090B] min-h-[100dvh]">
+      <DottedSurface />
       <MarketingNav />
       <Hero />
 
