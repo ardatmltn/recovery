@@ -18,16 +18,18 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
 
     const scene = new THREE.Scene()
 
-    const w = el.clientWidth || window.innerWidth
-    const h = el.clientHeight || window.innerHeight
-
-    const camera = new THREE.PerspectiveCamera(60, w / h, 1, 10000)
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000)
     camera.position.set(0, 355, 1220)
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
     renderer.setPixelRatio(window.devicePixelRatio)
-    renderer.setSize(w, h)
+    renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.setClearColor(0x000000, 0)
+
+    // Style the canvas to fill the container
+    renderer.domElement.style.width = '100%'
+    renderer.domElement.style.height = '100%'
+    renderer.domElement.style.display = 'block'
 
     el.appendChild(renderer.domElement)
 
@@ -61,7 +63,7 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
     scene.add(points)
 
     let count = 0
-    let animationId: number = 0
+    let animationId = 0
 
     const animate = () => {
       animationId = requestAnimationFrame(animate)
@@ -82,11 +84,9 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
     }
 
     const handleResize = () => {
-      const w2 = el.clientWidth || window.innerWidth
-      const h2 = el.clientHeight || window.innerHeight
-      camera.aspect = w2 / h2
+      camera.aspect = window.innerWidth / window.innerHeight
       camera.updateProjectionMatrix()
-      renderer.setSize(w2, h2)
+      renderer.setSize(window.innerWidth, window.innerHeight)
     }
 
     window.addEventListener('resize', handleResize)
@@ -105,7 +105,14 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
   return (
     <div
       ref={containerRef}
-      className={cn('pointer-events-none absolute inset-0 z-0', className)}
+      className={cn(className)}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 1,
+        pointerEvents: 'none',
+        overflow: 'hidden',
+      }}
       {...props}
     />
   )

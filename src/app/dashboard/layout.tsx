@@ -8,7 +8,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="dark relative flex h-screen overflow-hidden bg-[#09090B]">
       <DottedSurfaceClient />
-      <div className="relative z-10 flex h-full w-full overflow-hidden">
+      <div className="relative z-[2] flex h-full w-full overflow-hidden">
         <Sidebar />
         <div className="flex flex-col flex-1 overflow-hidden">
           <Header />

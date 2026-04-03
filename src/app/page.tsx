@@ -18,7 +18,7 @@ export default function LandingPage() {
   return (
     <div className="relative min-h-[100dvh] bg-[#09090B]">
       <DottedSurface />
-      <div className="relative z-10">
+      <div className="relative z-[2]">
       <MarketingNav />
       <Hero />
 
