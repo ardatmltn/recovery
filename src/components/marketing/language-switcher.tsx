@@ -2,9 +2,9 @@
 
 import { useLanguage, type Lang } from '@/lib/language-context'
 
-const flags: Record<Lang, { emoji: string; label: string }> = {
-  tr: { emoji: '🇹🇷', label: 'TR' },
-  en: { emoji: '🇬🇧', label: 'EN' },
+const langs: Record<Lang, { src: string; label: string }> = {
+  tr: { src: 'https://flagcdn.com/w40/tr.png', label: 'TR' },
+  en: { src: 'https://flagcdn.com/w40/gb.png', label: 'EN' },
 }
 
 export function LanguageSwitcher() {
@@ -16,13 +16,20 @@ export function LanguageSwitcher() {
         <button
           key={l}
           onClick={() => setLang(l)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+          title={langs[l].label}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
             lang === l
               ? 'bg-zinc-700 text-white'
               : 'text-zinc-500 hover:text-zinc-300'
           }`}
         >
-          <span className="text-base leading-none">{flags[l].emoji}</span>
+          <img
+            src={langs[l].src}
+            alt={langs[l].label}
+            width={20}
+            height={14}
+            className="rounded-sm object-cover"
+          />
         </button>
       ))}
     </div>
