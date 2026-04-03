@@ -16,7 +16,7 @@ export default function LandingPage() {
   const tx = translations[lang]
 
   return (
-    <div className="relative min-h-[100dvh] bg-[#09090B]">
+    <div className="relative min-h-[100dvh]">
       <DottedSurface />
       <div className="relative z-[2]">
       <MarketingNav />

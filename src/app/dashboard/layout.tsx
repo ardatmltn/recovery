@@ -6,7 +6,7 @@ import { DottedSurfaceClient } from '@/components/ui/dotted-surface-client'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="dark relative flex h-screen overflow-hidden bg-[#09090B]">
+    <div className="dark relative flex h-screen overflow-hidden">
       <DottedSurfaceClient />
       <div className="relative z-[2] flex h-full w-full overflow-hidden">
         <Sidebar />
