@@ -13,16 +13,7 @@ export function Hero() {
   const tx = translations[lang].hero
 
   return (
-    <section className="relative min-h-[100dvh] bg-[#09090B] overflow-hidden flex items-center">
-      {/* Dot grid */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(circle, #27272a 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
-          opacity: 0.5,
-        }}
-      />
+    <section className="relative min-h-[100dvh] overflow-hidden flex items-center">
       <div className="absolute top-1/3 left-1/3 w-[640px] h-[640px] rounded-full bg-green-500/[0.05] blur-[130px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-emerald-600/[0.04] blur-[100px] pointer-events-none" />
 

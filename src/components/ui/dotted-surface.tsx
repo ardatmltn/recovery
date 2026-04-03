@@ -18,8 +18,9 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
 
     const scene = new THREE.Scene()
 
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000)
-    camera.position.set(0, 355, 1220)
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000)
+    camera.position.set(0, 800, 1800)
+    camera.lookAt(0, 0, 0)
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
     renderer.setPixelRatio(window.devicePixelRatio)
