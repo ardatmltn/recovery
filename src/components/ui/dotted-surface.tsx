@@ -81,7 +81,7 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
       }
       posAttr.needsUpdate = true
       renderer.render(scene, camera)
-      count += 0.07
+      count += 0.03
     }
 
     const handleResize = () => {
