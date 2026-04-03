@@ -69,12 +69,12 @@ export default function LandingPage() {
           {tx.features.items.slice(2).map((item, idx) => {
             const Icon = featureIcons[idx + 2]
             return (
-              <div key={item.title} className="md:col-span-4 bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-2xl p-6 transition-all duration-300 group">
-                <div className="w-9 h-9 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center justify-center mb-5 group-hover:bg-green-500/15 transition-colors">
-                  <Icon className="w-4 h-4 text-green-400" />
+              <div key={item.title} className="md:col-span-4 bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-2xl p-8 transition-all duration-300 group">
+                <div className="w-10 h-10 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500/15 transition-colors">
+                  <Icon className="w-5 h-5 text-green-400" />
                 </div>
-                <h3 className="font-display font-semibold text-white text-base mb-2">{item.title}</h3>
-                <p className="text-zinc-500 text-xs leading-relaxed">{item.desc}</p>
+                <h3 className="font-display font-bold text-white text-xl mb-3">{item.title}</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">{item.desc}</p>
               </div>
             )
           })}
