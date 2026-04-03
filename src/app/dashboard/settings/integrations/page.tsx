@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { saveIyzicoCredentials, saveN8nWebhookUrl } from '@/app/actions'
+import { IyzicoTestButton } from '@/components/dashboard/iyzico-test-button'
 
 export default async function IntegrationsPage() {
   const supabase = await createServerClient()
@@ -49,7 +50,10 @@ export default async function IntegrationsPage() {
               <Label htmlFor="iyzico_base_url">Base URL</Label>
               <Input id="iyzico_base_url" name="iyzico_base_url" defaultValue={org?.iyzico_base_url ?? 'https://sandbox-api.iyzipay.com'} />
             </div>
-            <Button type="submit">Save İyzico credentials</Button>
+            <div className="flex items-center gap-3 pt-2">
+              <Button type="submit">Save İyzico credentials</Button>
+              {org?.iyzico_connected && <IyzicoTestButton />}
+            </div>
           </form>
         </CardContent>
       </Card>

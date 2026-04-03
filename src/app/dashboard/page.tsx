@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatRelativeTime } from '@/lib/utils'
 import { DollarSign, AlertCircle, TrendingUp, Activity } from 'lucide-react'
+import { SetupGuide } from '@/components/dashboard/setup-guide'
 
 export default async function DashboardPage() {
   const supabase = await createServerClient()
@@ -15,6 +16,13 @@ export default async function DashboardPage() {
     .single()
 
   const orgId = userData?.org_id ?? ''
+
+  // Fetch org settings for setup guide
+  const { data: org } = await supabase
+    .from('organizations')
+    .select('iyzico_connected, n8n_webhook_url')
+    .eq('id', orgId)
+    .single()
 
   // Fetch recent payment events
   const { data: recentFailures } = await supabase
@@ -45,12 +53,21 @@ export default async function DashboardPage() {
     .eq('org_id', orgId)
     .in('status', ['new', 'processing'])
 
+  const showSetupGuide = !org?.iyzico_connected || !org?.n8n_webhook_url || (activeFailures === 0 && (!analytics || analytics.length === 0))
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Overview</h1>
         <p className="text-muted-foreground">Last 30 days performance</p>
       </div>
+
+      {showSetupGuide && (
+        <SetupGuide
+          iyzicoConnected={!!org?.iyzico_connected}
+          n8nConfigured={!!org?.n8n_webhook_url}
+        />
+      )}
 
       {/* Metric cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

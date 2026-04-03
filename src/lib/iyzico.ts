@@ -143,4 +143,49 @@ export async function retryPaymentWithToken(params: {
   })
 }
 
-export const iyzico = { retryPaymentWithToken, verifyWebhookSignature }
+// Test connection using explicit config (for org-stored credentials)
+export async function testConnectionWithConfig(
+  config: IyzicoConfig
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const randomString = Math.random().toString(36).substring(2, 15)
+    const body = JSON.stringify({
+      locale: 'tr',
+      conversationId: `recoverly-test-${Date.now()}`,
+      binNumber: '554960',
+    })
+    const authorization = generateAuthorizationHeader(config, randomString, body)
+
+    const response = await fetch(`${config.baseUrl}/payment/installment/info`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization,
+        'x-iyzi-rnd': randomString,
+        'x-iyzi-client-version': 'recoverly/1.0',
+      },
+      body,
+    })
+
+    if (!response.ok) {
+      return { success: false, message: `HTTP ${response.status}: Could not reach İyzico API` }
+    }
+
+    const json = await response.json() as { status: string; errorMessage?: string }
+
+    if (json.status === 'success') {
+      return { success: true, message: 'Connection successful! Credentials are valid.' }
+    }
+
+    // İyzico returned a proper response but credentials may be wrong
+    if (json.errorMessage) {
+      return { success: false, message: json.errorMessage }
+    }
+
+    return { success: false, message: 'Unexpected response from İyzico API' }
+  } catch (err) {
+    return { success: false, message: `Network error: ${(err as Error).message}` }
+  }
+}
+
+export const iyzico = { retryPaymentWithToken, verifyWebhookSignature, testConnectionWithConfig }

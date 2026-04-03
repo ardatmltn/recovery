@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createServiceClient, createServerClient } from '@/lib/supabase/server'
+import { testConnectionWithConfig } from '@/lib/iyzico'
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -55,6 +56,29 @@ export async function saveIyzicoCredentials(formData: FormData) {
   await supabase.from('organizations').update(update).eq('id', orgId)
 
   revalidatePath('/dashboard/settings/integrations')
+}
+
+// ── İyzico connection test ────────────────────────────────────────────────────
+
+export async function testIyzicoConnection(): Promise<{ success: boolean; message: string }> {
+  const orgId = await getOrgId()
+  const supabase = createServiceClient()
+
+  const { data: org } = await supabase
+    .from('organizations')
+    .select('iyzico_api_key_encrypted, iyzico_secret_key_encrypted, iyzico_base_url')
+    .eq('id', orgId)
+    .single()
+
+  if (!org?.iyzico_api_key_encrypted || !org?.iyzico_secret_key_encrypted) {
+    return { success: false, message: 'Please save your API Key and Secret Key first.' }
+  }
+
+  return testConnectionWithConfig({
+    apiKey: org.iyzico_api_key_encrypted,
+    secretKey: org.iyzico_secret_key_encrypted,
+    baseUrl: org.iyzico_base_url ?? 'https://sandbox-api.iyzipay.com',
+  })
 }
 
 // ── n8n webhook URL ───────────────────────────────────────────────────────────
