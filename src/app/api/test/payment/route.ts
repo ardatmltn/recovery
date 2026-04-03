@@ -19,8 +19,9 @@ export async function POST(req: NextRequest) {
   if (!orgId) return NextResponse.json({ error: 'No organization' }, { status: 400 })
 
   const body = await req.json().catch(() => ({}))
-  const amount = Number(body.amount) || 199.90
+  const amount = Math.round(Number(body.amount) || 19990)
   const currency = body.currency || 'TRY'
+  // amount is stored in smallest currency unit (kuruş for TRY)
 
   const service = createServiceClient()
 
