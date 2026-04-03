@@ -17,10 +17,10 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">Manage your account and integrations</p>
+        <h1 className="font-display font-bold text-white text-2xl">Settings</h1>
+        <p className="text-zinc-500 text-sm mt-0.5">Manage your account and integrations</p>
       </div>
-      <div className="flex gap-1 border-b">
+      <div className="flex gap-1 border-b border-zinc-800">
         {tabs.map(({ href, label }) => (
           <Link
             key={href}
@@ -28,8 +28,8 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
             className={cn(
               'px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
               pathname === href
-                ? 'border-primary text-foreground'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
+                ? 'border-green-500 text-white'
+                : 'border-transparent text-zinc-500 hover:text-zinc-300'
             )}
           >
             {label}

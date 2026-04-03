@@ -5,10 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { generateOrgSlug } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Zap, Loader2 } from 'lucide-react'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -50,76 +47,92 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 bg-primary rounded-lg" />
-            <span className="font-bold text-xl">Recoverly</span>
+    <div className="min-h-screen bg-[#09090B] flex items-center justify-center px-4">
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(circle, #27272a 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+          opacity: 0.3,
+        }}
+      />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-green-500/[0.04] blur-[100px] pointer-events-none" />
+
+      <div className="relative w-full max-w-sm">
+        <div className="flex items-center justify-center gap-2 mb-8">
+          <div className="w-7 h-7 bg-green-500 rounded-md flex items-center justify-center">
+            <Zap className="w-4 h-4 text-black" />
           </div>
-          <CardTitle className="text-2xl">Create account</CardTitle>
-          <CardDescription>Start recovering failed payments in minutes</CardDescription>
-        </CardHeader>
-        <CardContent>
+          <span className="font-display font-bold text-white text-lg">Recoverly</span>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
+          <h1 className="font-display font-bold text-white text-2xl mb-1">Create account</h1>
+          <p className="text-zinc-500 text-sm mb-6">Start recovering failed payments in minutes</p>
+
           <form onSubmit={handleRegister} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="fullName">Full name</Label>
-              <Input
-                id="fullName"
+            <div>
+              <label className="text-zinc-400 text-xs font-medium block mb-1.5">Full name</label>
+              <input
                 placeholder="Jane Smith"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
+                className="w-full px-3.5 py-2.5 bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-green-500/50 focus:ring-1 focus:ring-green-500/20 rounded-xl text-white text-sm placeholder:text-zinc-600 outline-none transition-colors"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="orgName">Company / Product name</Label>
-              <Input
-                id="orgName"
+            <div>
+              <label className="text-zinc-400 text-xs font-medium block mb-1.5">Company / Product name</label>
+              <input
                 placeholder="Acme Inc."
                 value={orgName}
                 onChange={(e) => setOrgName(e.target.value)}
                 required
+                className="w-full px-3.5 py-2.5 bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-green-500/50 focus:ring-1 focus:ring-green-500/20 rounded-xl text-white text-sm placeholder:text-zinc-600 outline-none transition-colors"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
+            <div>
+              <label className="text-zinc-400 text-xs font-medium block mb-1.5">Email</label>
+              <input
                 type="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="w-full px-3.5 py-2.5 bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-green-500/50 focus:ring-1 focus:ring-green-500/20 rounded-xl text-white text-sm placeholder:text-zinc-600 outline-none transition-colors"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
+            <div>
+              <label className="text-zinc-400 text-xs font-medium block mb-1.5">Password</label>
+              <input
                 type="password"
                 placeholder="At least 8 characters"
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="w-full px-3.5 py-2.5 bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-green-500/50 focus:ring-1 focus:ring-green-500/20 rounded-xl text-white text-sm placeholder:text-zinc-600 outline-none transition-colors"
               />
             </div>
-            {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full" disabled={loading}>
+            {error && <p className="text-red-400 text-xs">{error}</p>}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2.5 bg-green-500 hover:bg-green-400 text-black font-semibold rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               {loading ? 'Creating account…' : 'Create account'}
-            </Button>
+            </button>
           </form>
-        </CardContent>
-        <CardFooter>
-          <p className="text-sm text-muted-foreground text-center w-full">
-            Already have an account?{' '}
-            <Link href="/login" className="text-primary hover:underline">
-              Sign in
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
+        </div>
+
+        <p className="text-zinc-600 text-sm text-center mt-5">
+          Already have an account?{' '}
+          <Link href="/login" className="text-zinc-400 hover:text-white transition-colors">
+            Sign in
+          </Link>
+        </p>
+      </div>
     </div>
   )
 }
