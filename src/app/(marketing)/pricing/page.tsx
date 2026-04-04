@@ -2,8 +2,7 @@
 
 import Link from 'next/link'
 import { Check, Zap } from 'lucide-react'
-import { useRef, useEffect } from 'react'
-import { ModalPricing } from '@/components/ui/modal-pricing'
+import { useRef, useEffect, useState } from 'react'
 import { MarketingNav } from '@/components/marketing/nav'
 import { RippleButton } from '@/components/ui/multi-type-ripple-buttons'
 import { useLanguage } from '@/lib/language-context'
@@ -12,20 +11,35 @@ import { translations } from '@/components/marketing/translations'
 const PLAN_NAMES = ['Starter', 'Growth', 'Pro']
 const PLAN_PRICES = ['59', '99', '149']
 
-function ShaderCanvas() {
+// Center X positions in transformed shader UV space (uv.x * 1.5 - 0.25)
+// Starter ≈ left third, Growth ≈ center, Pro ≈ right third
+const PLAN_CENTER_X = [0.08, 0.5, 0.92]
+
+function ShaderCanvas({ targetX }: { targetX: number }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const targetXRef = useRef(targetX)
+  const currentXRef = useRef(targetX)
+  const uCenterLocRef = useRef<WebGLUniformLocation | null>(null)
+  const glRef = useRef<WebGLProgram | null>(null)
+  const glCtxRef = useRef<WebGLRenderingContext | null>(null)
+
+  useEffect(() => {
+    targetXRef.current = targetX
+  }, [targetX])
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const gl = canvas.getContext('webgl')
     if (!gl) return
+    glCtxRef.current = gl
 
     const vertSrc = `attribute vec2 aPosition; void main() { gl_Position = vec4(aPosition, 0.0, 1.0); }`
     const fragSrc = `
       precision highp float;
       uniform float iTime;
       uniform vec2 iResolution;
+      uniform vec2 uCenter;
       mat2 rotate2d(float angle){ float c=cos(angle),s=sin(angle); return mat2(c,-s,s,c); }
       float variation(vec2 v1,vec2 v2,float strength,float speed){ return sin(dot(normalize(v1),normalize(v2))*strength+iTime*speed)/100.0; }
       vec3 paintCircle(vec2 uv,vec2 center,float rad,float width){
@@ -41,7 +55,7 @@ function ShaderCanvas() {
         uv.x*=1.5; uv.x-=0.25;
         float mask=0.0;
         float radius=.35;
-        vec2 center=vec2(.5);
+        vec2 center=uCenter;
         mask+=paintCircle(uv,center,radius,.035).r;
         mask+=paintCircle(uv,center,radius-.018,.01).r;
         mask+=paintCircle(uv,center,radius+.018,.005).r;
@@ -65,6 +79,7 @@ function ShaderCanvas() {
     gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fragSrc))
     gl.linkProgram(program)
     gl.useProgram(program)
+    glRef.current = program
 
     const buf = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, buf)
@@ -75,11 +90,15 @@ function ShaderCanvas() {
 
     const iTimeLoc = gl.getUniformLocation(program, 'iTime')
     const iResLoc = gl.getUniformLocation(program, 'iResolution')
+    uCenterLocRef.current = gl.getUniformLocation(program, 'uCenter')
 
     let raf = 0
     const render = (t: number) => {
+      // Smooth lerp toward target
+      currentXRef.current += (targetXRef.current - currentXRef.current) * 0.04
       gl.uniform1f(iTimeLoc, t * 0.001)
       gl.uniform2f(iResLoc, canvas.width, canvas.height)
+      gl.uniform2f(uCenterLocRef.current!, currentXRef.current, 0.5)
       gl.drawArrays(gl.TRIANGLES, 0, 6)
       raf = requestAnimationFrame(render)
     }
@@ -112,13 +131,14 @@ export default function PricingPage() {
   const { lang } = useLanguage()
   const tx = translations[lang].pricingPage
   const nav = translations[lang].nav
+  const [selectedPlan, setSelectedPlan] = useState(1)
 
   return (
     <div className="relative min-h-[100dvh] bg-[#09090B]">
-      <ShaderCanvas />
+      <ShaderCanvas targetX={PLAN_CENTER_X[selectedPlan]} />
 
       <div className="relative" style={{ zIndex: 2 }}>
-        <MarketingNav showUpgradeButton={<ModalPricing />} />
+        <MarketingNav />
 
         {/* Hero */}
         <div className="pt-36 pb-16 text-center px-6">
@@ -129,24 +149,25 @@ export default function PricingPage() {
             {tx.title}
           </h1>
           <p className="text-zinc-400 text-lg max-w-md mx-auto mb-2">{tx.subtitle}</p>
-          <p className="text-zinc-600 text-sm">{tx.sub2}</p>
+          <p className="text-zinc-400 text-sm">{tx.sub2}</p>
         </div>
 
         {/* Plans */}
         <div className="max-w-5xl mx-auto px-6 pb-28">
           <div className="flex flex-col md:flex-row gap-6 justify-center items-stretch">
             {tx.plans.map((plan, i) => {
+              const isSelected = selectedPlan === i
               const highlighted = i === 1
               return (
                 <div
                   key={PLAN_NAMES[i]}
+                  onClick={() => setSelectedPlan(i)}
                   className={[
-                    'relative flex-1 max-w-xs flex flex-col rounded-2xl px-7 py-8 transition-all duration-300',
-                    'backdrop-blur-[14px]',
-                    'bg-gradient-to-br',
-                    highlighted
-                      ? 'from-white/20 to-white/10 border border-green-400/30 shadow-2xl ring-2 ring-green-400/20 scale-105'
-                      : 'from-white/10 to-white/5 border border-white/10',
+                    'relative flex-1 max-w-xs flex flex-col rounded-2xl px-7 py-8 cursor-pointer',
+                    'backdrop-blur-[14px] bg-gradient-to-br transition-all duration-300',
+                    isSelected
+                      ? 'from-white/20 to-white/10 border border-green-400/40 shadow-2xl ring-2 ring-green-400/30 scale-105'
+                      : 'from-white/10 to-white/5 border border-white/10 hover:border-white/20 hover:from-white/15',
                   ].join(' ')}
                   style={{ backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}
                 >
@@ -179,12 +200,12 @@ export default function PricingPage() {
                     ))}
                   </ul>
 
-                  <Link href="/register" className="block mt-auto">
+                  <Link href="/register" className="block mt-auto" onClick={(e) => e.stopPropagation()}>
                     <RippleButton
-                      rippleColor={highlighted ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.15)'}
+                      rippleColor={isSelected ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.15)'}
                       className={[
                         'w-full py-3 rounded-xl font-semibold text-sm',
-                        highlighted
+                        isSelected
                           ? 'bg-green-500 hover:bg-green-400 text-black'
                           : 'bg-white/10 hover:bg-white/20 text-white border border-white/20',
                       ].join(' ')}
