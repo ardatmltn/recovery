@@ -42,7 +42,6 @@ export async function saveIyzicoCredentials(formData: FormData) {
   const merchantId = formData.get('iyzico_merchant_id') as string
   const baseUrl = (formData.get('iyzico_base_url') as string) || 'https://sandbox-api.iyzipay.com'
 
-  // Only update key fields if provided (not empty — preserve existing)
   const update: Record<string, string | boolean> = {
     iyzico_merchant_id: merchantId,
     iyzico_base_url: baseUrl,
@@ -96,8 +95,6 @@ export async function saveN8nWebhookUrl(formData: FormData) {
   revalidatePath('/dashboard/settings/integrations')
 }
 
-// ── Notification settings ────────────────────────────────────────────────────
-
 // ── Recovery sequences ───────────────────────────────────────────────────────
 
 export async function createRecoverySequence(formData: FormData) {
@@ -142,7 +139,6 @@ export async function saveEmailNotificationSettings(formData: FormData) {
   const orgId = await getOrgId()
 
   const supabase = createServiceClient()
-  // Ensure row exists first, then update only email fields
   await supabase
     .from('notification_settings')
     .upsert({ org_id: orgId }, { onConflict: 'org_id', ignoreDuplicates: true })
@@ -166,7 +162,6 @@ export async function saveSlackNotificationSettings(formData: FormData) {
   const orgId = await getOrgId()
 
   const supabase = createServiceClient()
-  // Ensure row exists first, then update only slack field
   await supabase
     .from('notification_settings')
     .upsert({ org_id: orgId }, { onConflict: 'org_id', ignoreDuplicates: true })
@@ -180,4 +175,30 @@ export async function saveSlackNotificationSettings(formData: FormData) {
     .eq('org_id', orgId)
 
   revalidatePath('/dashboard/settings/notifications')
+}
+
+// ── Message templates ────────────────────────────────────────────────────────
+
+export async function saveTemplate(formData: FormData) {
+  const orgId = await getOrgId()
+  const id = formData.get('id') as string
+  const name = formData.get('name') as string
+  const subject = formData.get('subject') as string
+  const body = formData.get('body') as string
+
+  if (!id || !name?.trim() || !subject?.trim() || !body?.trim()) return
+
+  const supabase = createServiceClient()
+  await supabase
+    .from('message_templates')
+    .update({
+      name: name.trim(),
+      subject: subject.trim(),
+      body: body.trim(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .eq('org_id', orgId)
+
+  revalidatePath('/dashboard/templates')
 }

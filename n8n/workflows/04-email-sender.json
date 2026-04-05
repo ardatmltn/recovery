@@ -11,59 +11,62 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT * FROM message_templates WHERE id = '{{$json.attempt.template_id}}'"
+        "url": "={{ $env.NEXT_APP_URL }}/api/email/send",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "attempt_id", "value": "={{ $json.attempt.id }}" },
+            { "name": "org_id",     "value": "={{ $json.attempt.org_id }}" }
+          ]
+        },
+        "options": {}
       },
-      "id": "get-template",
-      "name": "Get Template",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 1,
-      "position": [450, 300]
+      "id": "send-email-api",
+      "name": "Send Email via API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [450, 300],
+      "credentials": {
+        "httpHeaderAuth": { "name": "Recoverly Internal Secret" }
+      }
     },
     {
       "parameters": {
-        "jsCode": "const template = $input.first().json;\nconst attempt = $('Start').first().json.attempt;\n\n// Replace template variables\nlet subject = template.subject || 'Action required: Payment failed';\nlet body = template.body;\n\nconst vars = {\n  '{{customer_name}}': attempt.customer_name || 'Valued Customer',\n  '{{amount}}': `$${(attempt.amount / 100).toFixed(2)}`,\n  '{{failure_reason}}': attempt.failure_code || 'card declined',\n};\n\nObject.entries(vars).forEach(([key, val]) => {\n  subject = subject.replaceAll(key, val);\n  body = body.replaceAll(key, val);\n});\n\nreturn [{ json: { subject, body, to: attempt.customer_email, attempt_id: attempt.id } }];"
+        "conditions": {
+          "boolean": [
+            { "value1": "={{ $json.success }}", "value2": true }
+          ]
+        }
       },
-      "id": "prepare-email",
-      "name": "Prepare Email Content",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
+      "id": "check-success",
+      "name": "Check Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
       "position": [650, 300]
     },
     {
       "parameters": {
-        "authentication": "apiKey",
-        "fromEmail": "={{$env.RESEND_FROM_EMAIL}}",
-        "toEmail": "={{$json.to}}",
-        "subject": "={{$json.subject}}",
-        "emailType": "html",
-        "message": "={{$json.body}}"
+        "operation": "executeQuery",
+        "query": "UPDATE recovery_attempts SET status = 'failed', updated_at = NOW() WHERE id = '={{ $('Start').first().json.attempt.id }}'"
       },
-      "id": "send-email",
-      "name": "Send via Resend",
-      "type": "n8n-nodes-base.emailSend",
-      "typeVersion": 2,
-      "position": [850, 300]
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "table": "recovery_attempts",
-        "updateKey": "id",
-        "columns": "status,executed_at",
-        "additionalFields": {}
-      },
-      "id": "update-attempt",
-      "name": "Mark Attempt Sent",
+      "id": "mark-failed",
+      "name": "Mark Failed",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 1,
-      "position": [1050, 300]
+      "position": [850, 460]
     }
   ],
   "connections": {
-    "Start": { "main": [[{ "node": "Get Template", "type": "main", "index": 0 }]] },
-    "Get Template": { "main": [[{ "node": "Prepare Email Content", "type": "main", "index": 0 }]] },
-    "Prepare Email Content": { "main": [[{ "node": "Send via Resend", "type": "main", "index": 0 }]] },
-    "Send via Resend": { "main": [[{ "node": "Mark Attempt Sent", "type": "main", "index": 0 }]] }
+    "Start":            { "main": [[{ "node": "Send Email via API", "type": "main", "index": 0 }]] },
+    "Send Email via API": { "main": [[{ "node": "Check Success",     "type": "main", "index": 0 }]] },
+    "Check Success":    {
+      "main": [
+        [],
+        [{ "node": "Mark Failed", "type": "main", "index": 0 }]
+      ]
+    }
   }
 }
