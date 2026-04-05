@@ -54,7 +54,7 @@ function ShaderCanvas({ targetX }: { targetX: number }) {
         vec2 uv=gl_FragCoord.xy/iResolution.xy;
         uv.x*=1.5; uv.x-=0.25;
         float mask=0.0;
-        float radius=.35;
+        float radius=.18;
         vec2 center=uCenter;
         mask+=paintCircle(uv,center,radius,.035).r;
         mask+=paintCircle(uv,center,radius-.018,.01).r;
