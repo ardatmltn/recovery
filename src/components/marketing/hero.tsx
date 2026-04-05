@@ -92,11 +92,11 @@ export function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.85 }}
-              className="flex items-center gap-5 text-zinc-600 text-xs"
+              className="flex items-center gap-5 text-zinc-400 text-xs"
             >
               {tx.trust.map((t) => (
                 <span key={t} className="flex items-center gap-1.5">
-                  <span className="w-1 h-1 rounded-full bg-green-600" />
+                  <span className="w-1 h-1 rounded-full bg-green-500" />
                   {t}
                 </span>
               ))}

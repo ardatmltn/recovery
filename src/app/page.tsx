@@ -144,10 +144,10 @@ export default function LandingPage() {
             </div>
             <span className="font-display font-semibold text-white text-sm">Recoverly</span>
           </div>
-          <p className="text-zinc-700 text-xs hidden md:block">{tx.footer.copyright}</p>
+          <p className="text-zinc-500 text-xs hidden md:block">{tx.footer.copyright}</p>
           <div className="flex gap-6">
-            <Link href="/pricing" className="text-zinc-600 hover:text-zinc-400 text-xs transition-colors">{tx.footer.pricing}</Link>
-            <Link href="/login" className="text-zinc-600 hover:text-zinc-400 text-xs transition-colors">{tx.footer.signIn}</Link>
+            <Link href="/pricing" className="text-zinc-400 hover:text-zinc-200 text-xs transition-colors">{tx.footer.pricing}</Link>
+            <Link href="/login" className="text-zinc-400 hover:text-zinc-200 text-xs transition-colors">{tx.footer.signIn}</Link>
           </div>
         </div>
       </footer>

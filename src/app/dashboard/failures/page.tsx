@@ -56,14 +56,14 @@ export default async function FailuresPage() {
                   <tr key={event.id} className="hover:bg-muted/30 cursor-pointer">
                     <td className="px-4 py-3">
                       <a href={`/dashboard/failures/${event.id}`} className="block">
-                        <p className="font-medium">{customer?.name ?? '—'}</p>
-                        <p className="text-xs text-muted-foreground">{customer?.email ?? '—'}</p>
+                        <p className="font-medium text-foreground">{customer?.name ?? '—'}</p>
+                        <p className="text-xs text-zinc-400">{customer?.email ?? '—'}</p>
                       </a>
                     </td>
                     <td className="px-4 py-3 font-semibold">
                       {formatCurrency(event.amount, event.currency)}
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground max-w-xs truncate">
+                    <td className="px-4 py-3 text-zinc-300 max-w-xs truncate">
                       {event.failure_code ?? '—'}
                     </td>
                     <td className="px-4 py-3">
@@ -71,7 +71,7 @@ export default async function FailuresPage() {
                         {event.status}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">
+                    <td className="px-4 py-3 text-zinc-300">
                       {formatRelativeTime(event.created_at)}
                     </td>
                   </tr>
