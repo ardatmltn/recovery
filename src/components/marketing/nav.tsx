@@ -18,7 +18,7 @@ export function MarketingNav({ showUpgradeButton }: MarketingNavProps) {
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-800/60 bg-[#09090B]/80 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center shadow-[0_0_16px_rgba(34,197,94,0.3)]">
+          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center shadow-[0_0_16px_rgba(59,130,246,0.3)]">
             <Zap className="w-4 h-4 text-black" />
           </div>
           <span className="font-display font-bold text-white text-lg tracking-tight">Recoverly</span>
@@ -38,7 +38,7 @@ export function MarketingNav({ showUpgradeButton }: MarketingNavProps) {
           </Link>
           <Link
             href="/register"
-            className="px-4 py-2 bg-green-500 hover:bg-green-400 text-black text-sm font-semibold rounded-full transition-all shadow-[0_0_16px_rgba(34,197,94,0.2)] hover:shadow-[0_0_24px_rgba(34,197,94,0.35)] hover:-translate-y-px"
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-400 text-black text-sm font-semibold rounded-full transition-all shadow-[0_0_16px_rgba(59,130,246,0.2)] hover:shadow-[0_0_24px_rgba(59,130,246,0.35)] hover:-translate-y-px"
           >
             {tx.getStarted}
           </Link>

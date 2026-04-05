@@ -17,7 +17,7 @@ export function MarketingFooter() {
           {/* Brand */}
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 bg-green-500 rounded-md flex items-center justify-center">
+              <div className="w-7 h-7 bg-blue-500 rounded-md flex items-center justify-center">
                 <Zap className="w-3.5 h-3.5 text-black" />
               </div>
               <span className="font-display font-semibold text-white text-base">Recoverly</span>
@@ -51,7 +51,7 @@ export function MarketingFooter() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex items-center justify-between">
           <p className="text-zinc-400 text-xs">{tx.copyright}</p>
           <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
             <span className="text-zinc-400 text-xs">All systems operational</span>
           </div>
         </div>
