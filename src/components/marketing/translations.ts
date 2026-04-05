@@ -50,7 +50,7 @@ const translations = {
       title: 'Live in minutes,',
       titleAccent: 'not months.',
       steps: [
-        { num: '01', title: 'Connect İyzico', desc: 'Add your İyzico API key. Recoverly instantly starts listening for failed payment webhooks.' },
+        { num: '01', title: 'Connect your provider', desc: 'Add your payment provider API key. Recoverly instantly starts listening for failed payment webhooks.' },
         { num: '02', title: 'Configure sequences', desc: 'Set your recovery logic — retry timing, email templates, SMS fallback. Or use our smart defaults.' },
         { num: '03', title: 'Watch revenue return', desc: 'Sit back as Recoverly automatically recovers failed payments and keeps your MRR intact.' },
       ],
@@ -64,8 +64,14 @@ const translations = {
     },
     footer: {
       copyright: '© 2026 Recoverly. All rights reserved.',
+      tagline: 'Automated payment recovery for SaaS companies.',
+      product: 'Product',
       pricing: 'Pricing',
       signIn: 'Sign in',
+      register: 'Get started free',
+      legal: 'Legal',
+      privacy: 'Privacy Policy',
+      terms: 'Terms of Service',
     },
     pricingPage: {
       sectionLabel: 'Pricing',
@@ -149,7 +155,7 @@ const translations = {
       title: 'Dakikalar içinde canlıda,',
       titleAccent: 'aylarca değil.',
       steps: [
-        { num: '01', title: "İyzico'yu bağla", desc: 'İyzico API anahtarını ekle. Recoverly anında başarısız ödeme webhook\'larını dinlemeye başlar.' },
+        { num: '01', title: 'Sağlayıcını bağla', desc: 'Ödeme sağlayıcının API anahtarını ekle. Recoverly anında başarısız ödeme webhook\'larını dinlemeye başlar.' },
         { num: '02', title: 'Sekansları yapılandır', desc: 'Kurtarma mantığını ayarla — yeniden deneme zamanlaması, e-posta şablonları, SMS yedek. Veya akıllı varsayılanlarımızı kullan.' },
         { num: '03', title: 'Gelirinin geri dönüşünü izle', desc: 'Recoverly başarısız ödemeleri otomatik kurtarırken ve MRR\'ını korurken sen rahat et.' },
       ],
@@ -163,8 +169,14 @@ const translations = {
     },
     footer: {
       copyright: '© 2026 Recoverly. Tüm hakları saklıdır.',
+      tagline: 'SaaS şirketleri için otomatik ödeme kurtarma.',
+      product: 'Ürün',
       pricing: 'Fiyatlandırma',
       signIn: 'Giriş yap',
+      register: 'Ücretsiz başla',
+      legal: 'Yasal',
+      privacy: 'Gizlilik Politikası',
+      terms: 'Kullanım Koşulları',
     },
     pricingPage: {
       sectionLabel: 'Fiyatlandırma',

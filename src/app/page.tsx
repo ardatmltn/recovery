@@ -3,11 +3,12 @@
 import Link from 'next/link'
 import { Hero } from '@/components/marketing/hero'
 import { MarketingNav } from '@/components/marketing/nav'
-import { RefreshCw, Mail, TrendingUp, BarChart3, Shield, Zap } from 'lucide-react'
+import { RefreshCw, Mail, TrendingUp, BarChart3, Shield } from 'lucide-react'
 import { useLanguage } from '@/lib/language-context'
 import { translations } from '@/components/marketing/translations'
 import dynamic from 'next/dynamic'
 import { Testimonials } from '@/components/marketing/testimonials'
+import { MarketingFooter } from '@/components/marketing/footer'
 const DottedSurface = dynamic(() => import('@/components/ui/dotted-surface').then(m => ({ default: m.DottedSurface })), { ssr: false })
 
 const featureIcons = [RefreshCw, Mail, TrendingUp, BarChart3, Shield]
@@ -135,23 +136,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-zinc-800 py-10">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-green-500 rounded-md flex items-center justify-center">
-              <Zap className="w-3 h-3 text-black" />
-            </div>
-            <span className="font-display font-semibold text-white text-sm">Recoverly</span>
-          </div>
-          <p className="text-zinc-500 text-xs hidden md:block">{tx.footer.copyright}</p>
-          <div className="flex gap-6">
-            <Link href="/pricing" className="text-zinc-400 hover:text-zinc-200 text-xs transition-colors">{tx.footer.pricing}</Link>
-            <Link href="/login" className="text-zinc-400 hover:text-zinc-200 text-xs transition-colors">{tx.footer.signIn}</Link>
-          </div>
-        </div>
-      </footer>
       </div>
+      <MarketingFooter />
     </div>
   )
 }

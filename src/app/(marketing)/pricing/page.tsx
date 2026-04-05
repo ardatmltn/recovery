@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { Check, Zap } from 'lucide-react'
+import { Check } from 'lucide-react'
+import { MarketingFooter } from '@/components/marketing/footer'
 import { useRef, useEffect, useState } from 'react'
 import { MarketingNav } from '@/components/marketing/nav'
 import { RippleButton } from '@/components/ui/multi-type-ripple-buttons'
@@ -126,7 +127,7 @@ function ShaderCanvas({ targetX }: { targetX: number }) {
 export default function PricingPage() {
   const { lang } = useLanguage()
   const tx = translations[lang].pricingPage
-  const nav = translations[lang].nav
+
   const [selectedPlan, setSelectedPlan] = useState(1)
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [planCenterX, setPlanCenterX] = useState([0.155, 0.5, 0.845])
@@ -256,22 +257,8 @@ export default function PricingPage() {
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="border-t border-zinc-800 py-8">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-green-500 rounded-md flex items-center justify-center">
-                <Zap className="w-3 h-3 text-black" />
-              </div>
-              <span className="font-display font-semibold text-white text-sm">Recoverly</span>
-            </div>
-            <div className="flex gap-6">
-              <Link href="/" className="text-zinc-600 hover:text-zinc-400 text-xs transition-colors">Home</Link>
-              <Link href="/login" className="text-zinc-600 hover:text-zinc-400 text-xs transition-colors">{nav.signIn}</Link>
-            </div>
-          </div>
-        </footer>
       </div>
+      <MarketingFooter />
     </div>
   )
 }
