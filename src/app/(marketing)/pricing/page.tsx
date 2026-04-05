@@ -11,10 +11,6 @@ import { translations } from '@/components/marketing/translations'
 const PLAN_NAMES = ['Starter', 'Growth', 'Pro']
 const PLAN_PRICES = ['59', '99', '149']
 
-// Center X positions in transformed shader UV space (uv.x * 1.5 - 0.25)
-// Starter ≈ left third, Growth ≈ center, Pro ≈ right third
-const PLAN_CENTER_X = [0.08, 0.5, 0.92]
-
 function ShaderCanvas({ targetX }: { targetX: number }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const targetXRef = useRef(targetX)
@@ -54,7 +50,7 @@ function ShaderCanvas({ targetX }: { targetX: number }) {
         vec2 uv=gl_FragCoord.xy/iResolution.xy;
         uv.x*=1.5; uv.x-=0.25;
         float mask=0.0;
-        float radius=.18;
+        float radius=.23;
         vec2 center=uCenter;
         mask+=paintCircle(uv,center,radius,.035).r;
         mask+=paintCircle(uv,center,radius-.018,.01).r;
@@ -132,10 +128,28 @@ export default function PricingPage() {
   const tx = translations[lang].pricingPage
   const nav = translations[lang].nav
   const [selectedPlan, setSelectedPlan] = useState(1)
+  const cardRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const [planCenterX, setPlanCenterX] = useState([0.155, 0.5, 0.845])
+
+  useEffect(() => {
+    const updateCenters = () => {
+      const centers = cardRefs.current.map((el) => {
+        if (!el) return 0.5
+        const rect = el.getBoundingClientRect()
+        const screenRatio = (rect.left + rect.width / 2) / window.innerWidth
+        // Shader UV: uv.x = uv.x * 1.5 - 0.25 → invert to get uCenter.x
+        return screenRatio * 1.5 - 0.25
+      })
+      if (centers.some((c) => c !== 0.5)) setPlanCenterX(centers)
+    }
+    updateCenters()
+    window.addEventListener('resize', updateCenters)
+    return () => window.removeEventListener('resize', updateCenters)
+  }, [])
 
   return (
     <div className="relative min-h-[100dvh] bg-[#09090B]">
-      <ShaderCanvas targetX={PLAN_CENTER_X[selectedPlan]} />
+      <ShaderCanvas targetX={planCenterX[selectedPlan]} />
 
       <div className="relative" style={{ zIndex: 2 }}>
         <MarketingNav />
@@ -161,6 +175,7 @@ export default function PricingPage() {
               return (
                 <button
                   key={PLAN_NAMES[i]}
+                  ref={(el) => { cardRefs.current[i] = el }}
                   role="radio"
                   aria-checked={isSelected}
                   onClick={() => setSelectedPlan(i)}
