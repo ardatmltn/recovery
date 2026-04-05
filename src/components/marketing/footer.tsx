@@ -22,7 +22,7 @@ export function MarketingFooter() {
               </div>
               <span className="font-display font-semibold text-white text-base">Recoverly</span>
             </Link>
-            <p className="text-zinc-500 text-sm leading-relaxed max-w-xs">{tx.tagline}</p>
+            <p className="text-zinc-400 text-sm leading-relaxed max-w-xs">{tx.tagline}</p>
           </div>
 
           {/* Product */}
@@ -49,10 +49,10 @@ export function MarketingFooter() {
       {/* Bottom bar */}
       <div className="border-t border-zinc-800/60">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex items-center justify-between">
-          <p className="text-zinc-600 text-xs">{tx.copyright}</p>
+          <p className="text-zinc-500 text-xs">{tx.copyright}</p>
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-            <span className="text-zinc-600 text-xs">All systems operational</span>
+            <span className="text-zinc-400 text-xs">All systems operational</span>
           </div>
         </div>
       </div>

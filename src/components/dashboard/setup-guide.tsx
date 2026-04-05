@@ -108,7 +108,7 @@ export function SetupGuide({ iyzicoConnected, n8nConfigured }: Props) {
           </div>
           <div>
             <p className="text-sm font-semibold text-white">Get started with Recoverly</p>
-            <p className="text-[11px] text-zinc-500">{completedCount}/3 steps completed</p>
+            <p className="text-[11px] text-zinc-400">{completedCount}/3 steps completed</p>
           </div>
         </div>
         <span className="text-xs font-bold text-zinc-400">{progressPct}%</span>
@@ -133,21 +133,21 @@ export function SetupGuide({ iyzicoConnected, n8nConfigured }: Props) {
                   <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
                 ) : (
                   <div className="w-4 h-4 rounded-full border border-zinc-700 flex items-center justify-center shrink-0">
-                    <span className="text-[9px] font-bold text-zinc-500">{step.num}</span>
+                    <span className="text-[9px] font-bold text-zinc-300">{step.num}</span>
                   </div>
                 )}
                 {step.num < 3 && <div className="w-px flex-1 bg-zinc-800 mt-1.5" />}
               </div>
               <div className="pb-4 last:pb-0 min-w-0">
                 <div className="flex items-center gap-1.5 mb-0.5">
-                  <Icon className="w-3.5 h-3.5 text-zinc-500" />
-                  <p className={`text-sm font-medium ${step.done ? 'line-through text-zinc-600' : 'text-white'}`}>
+                  <Icon className="w-3.5 h-3.5 text-zinc-400" />
+                  <p className={`text-sm font-medium ${step.done ? 'line-through text-zinc-500' : 'text-white'}`}>
                     {step.title}
                   </p>
                 </div>
                 {!step.done && (
                   <>
-                    <p className="text-xs text-zinc-500 mb-2 leading-relaxed">{step.desc}</p>
+                    <p className="text-xs text-zinc-400 mb-2 leading-relaxed">{step.desc}</p>
                     {step.action}
                   </>
                 )}
