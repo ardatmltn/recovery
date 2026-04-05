@@ -14,7 +14,7 @@ export function Hero() {
 
   return (
     <section className="relative min-h-[100dvh] overflow-hidden flex items-center">
-      <div className="absolute top-1/3 left-1/3 w-[640px] h-[640px] rounded-full bg-blue-500/[0.05] blur-[130px] pointer-events-none" />
+      <div className="absolute top-1/3 left-1/3 w-[640px] h-[640px] rounded-full bg-green-500/[0.05] blur-[130px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-emerald-600/[0.04] blur-[100px] pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 pt-24 pb-20">
@@ -26,9 +26,9 @@ export function Hero() {
               initial={{ opacity: 0, x: -16 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ ...spring, delay: 0.1 }}
-              className="inline-flex items-center gap-2 mb-8 px-3.5 py-1.5 rounded-full border border-blue-500/20 bg-blue-500/[0.06] text-blue-400 text-xs font-semibold tracking-widest uppercase"
+              className="inline-flex items-center gap-2 mb-8 px-3.5 py-1.5 rounded-full border border-green-500/20 bg-green-500/[0.06] text-green-400 text-xs font-semibold tracking-widest uppercase"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
               {tx.badge}
             </motion.div>
 
@@ -43,7 +43,7 @@ export function Hero() {
               <br />
               <span
                 style={{
-                  backgroundImage: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 55%, #2563eb 100%)',
+                  backgroundImage: 'linear-gradient(135deg, #4ade80 0%, #22c55e 55%, #16a34a 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
@@ -75,7 +75,7 @@ export function Hero() {
             >
               <Link
                 href="/register"
-                className="group inline-flex items-center gap-2 px-7 py-3.5 bg-blue-500 hover:bg-blue-400 text-black font-semibold rounded-full text-sm transition-all duration-200 shadow-[0_0_28px_rgba(59,130,246,0.22)] hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] hover:-translate-y-0.5 active:translate-y-0"
+                className="group inline-flex items-center gap-2 px-7 py-3.5 bg-green-500 hover:bg-green-400 text-black font-semibold rounded-full text-sm transition-all duration-200 shadow-[0_0_28px_rgba(34,197,94,0.22)] hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] hover:-translate-y-0.5 active:translate-y-0"
               >
                 {tx.cta1}
                 <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
@@ -96,7 +96,7 @@ export function Hero() {
             >
               {tx.trust.map((t) => (
                 <span key={t} className="flex items-center gap-1.5">
-                  <span className="w-1 h-1 rounded-full bg-blue-500" />
+                  <span className="w-1 h-1 rounded-full bg-green-500" />
                   {t}
                 </span>
               ))}
@@ -119,9 +119,9 @@ export function Hero() {
                     </p>
                     <p className="font-display font-black text-white text-4xl tracking-tight">$24,180</p>
                   </div>
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full">
-                    <TrendingUp className="w-3 h-3 text-blue-400" />
-                    <span className="text-blue-400 text-xs font-semibold">+28%</span>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
+                    <TrendingUp className="w-3 h-3 text-green-400" />
+                    <span className="text-green-400 text-xs font-semibold">+28%</span>
                   </div>
                 </div>
 
@@ -133,7 +133,7 @@ export function Hero() {
                       animate={{ scaleY: 1 }}
                       transition={{ delay: 0.6 + i * 0.045, type: 'spring', stiffness: 120, damping: 20 }}
                       style={{ height: `${h}%`, transformOrigin: 'bottom' }}
-                      className={`flex-1 rounded-[2px] ${i === 11 ? 'bg-blue-400' : i >= 9 ? 'bg-blue-600/60' : 'bg-zinc-700'}`}
+                      className={`flex-1 rounded-[2px] ${i === 11 ? 'bg-green-400' : i >= 9 ? 'bg-green-600/60' : 'bg-zinc-700'}`}
                     />
                   ))}
                 </div>
@@ -151,7 +151,7 @@ export function Hero() {
                           initial={{ width: 0 }}
                           animate={{ width: `${pct}%` }}
                           transition={{ delay: 1, duration: 0.6, ease: 'easeOut' }}
-                          className="h-full bg-blue-500/50 rounded-full"
+                          className="h-full bg-green-500/50 rounded-full"
                         />
                       </div>
                       <span className="text-zinc-300 text-[11px] font-medium w-14 text-right shrink-0">
