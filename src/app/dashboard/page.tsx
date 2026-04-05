@@ -192,11 +192,11 @@ export default async function DashboardPage() {
                       <p className="text-sm font-medium text-white truncate">
                         {customer?.name || customer?.email || 'Unknown customer'}
                       </p>
-                      <p className="text-xs text-zinc-500 truncate mt-0.5">
+                      <p className="text-xs text-zinc-400 truncate mt-0.5">
                         {formatCurrency(event.amount, event.currency)} · {event.failure_message || 'Payment failed'}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-zinc-500 shrink-0">
+                    <div className="flex items-center gap-1 text-xs text-zinc-400 shrink-0">
                       <Clock className="w-3 h-3" />
                       {formatRelativeTime(event.created_at)}
                     </div>
