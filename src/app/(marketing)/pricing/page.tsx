@@ -154,16 +154,18 @@ export default function PricingPage() {
 
         {/* Plans */}
         <div className="max-w-5xl mx-auto px-6 pb-28">
-          <div className="flex flex-col md:flex-row gap-6 justify-center items-stretch">
+          <div role="radiogroup" aria-label="Select pricing plan" className="flex flex-col md:flex-row gap-6 justify-center items-stretch">
             {tx.plans.map((plan, i) => {
               const isSelected = selectedPlan === i
               const highlighted = i === 1
               return (
-                <div
+                <button
                   key={PLAN_NAMES[i]}
+                  role="radio"
+                  aria-checked={isSelected}
                   onClick={() => setSelectedPlan(i)}
                   className={[
-                    'relative flex-1 max-w-xs flex flex-col rounded-2xl px-7 py-8 cursor-pointer',
+                    'relative flex-1 max-w-xs flex flex-col rounded-2xl px-7 py-8 text-left',
                     'backdrop-blur-[14px] bg-gradient-to-br transition-all duration-300',
                     isSelected
                       ? 'from-white/20 to-white/10 border border-green-400/40 shadow-2xl ring-2 ring-green-400/30 scale-105'
@@ -213,7 +215,7 @@ export default function PricingPage() {
                       {tx.cta}
                     </RippleButton>
                   </Link>
-                </div>
+                </button>
               )
             })}
           </div>

@@ -4,7 +4,7 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { saveNotificationSettings } from '@/app/actions'
+import { saveEmailNotificationSettings, saveSlackNotificationSettings } from '@/app/actions'
 
 export default async function NotificationsPage() {
   const supabase = await createServerClient()
@@ -27,7 +27,7 @@ export default async function NotificationsPage() {
           <CardDescription>Choose what events trigger email alerts</CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={saveNotificationSettings} className="space-y-4">
+          <form action={saveEmailNotificationSettings} className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <Label>Payment failure alert</Label>
@@ -71,7 +71,7 @@ export default async function NotificationsPage() {
           <CardDescription>Send notifications to a Slack channel</CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={saveNotificationSettings} className="space-y-4">
+          <form action={saveSlackNotificationSettings} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="slack_webhook_url">Slack Webhook URL</Label>
               <Input id="slack_webhook_url" name="slack_webhook_url" defaultValue={settings?.slack_webhook_url ?? ''} placeholder="https://hooks.slack.com/services/..." />

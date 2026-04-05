@@ -26,9 +26,12 @@
       "parameters": {
         "conditions": {
           "string": [
+            { "value1": "={{$json.type}}", "operation": "equal", "value2": "email" },
+            { "value1": "={{$json.type}}", "operation": "equal", "value2": "sms" },
             { "value1": "={{$json.type}}", "operation": "equal", "value2": "auto_retry" }
           ]
-        }
+        },
+        "options": { "fallbackOutput": 3 }
       },
       "id": "route-by-type",
       "name": "Route by Type",
@@ -45,7 +48,7 @@
       "name": "Trigger Email Sender",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1,
-      "position": [850, 200]
+      "position": [850, 100]
     },
     {
       "parameters": {
@@ -56,7 +59,18 @@
       "name": "Trigger SMS Sender",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1,
-      "position": [850, 400]
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE recovery_attempts SET status = 'processing', updated_at = NOW() WHERE id = '={{$json.id}}'"
+      },
+      "id": "mark-auto-retry",
+      "name": "Mark Auto Retry Processing",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [850, 500]
     }
   ],
   "connections": {
@@ -65,7 +79,8 @@
     "Route by Type": {
       "main": [
         [{ "node": "Trigger Email Sender", "type": "main", "index": 0 }],
-        [{ "node": "Trigger SMS Sender", "type": "main", "index": 0 }]
+        [{ "node": "Trigger SMS Sender", "type": "main", "index": 0 }],
+        [{ "node": "Mark Auto Retry Processing", "type": "main", "index": 0 }]
       ]
     }
   }

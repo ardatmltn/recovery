@@ -37,40 +37,41 @@ export async function POST(request: Request) {
     payload = Object.fromEntries(params.entries()) as unknown as IyzicoWebhookPayload
   }
 
-  // Signature verification
-  const receivedSignature = request.headers.get('x-iyz-signature') ?? payload.token ?? ''
-  const secretKey = process.env.IYZICO_SECRET_KEY!
-
-  if (receivedSignature && secretKey) {
-    const isValid = verifyWebhookSignature(
-      secretKey,
-      payload.paymentConversationId ?? '',
-      payload.iyziReferenceCode ?? '',
-      payload.merchantId ?? '',
-      payload.status ?? '',
-      receivedSignature
-    )
-    if (!isValid) {
-      return NextResponse.json({ error: 'Invalid webhook signature' }, { status: 400 })
-    }
-  }
-
-  // Only process failed payments
-  if (payload.status !== IYZICO_STATUS.FAILURE) {
-    return NextResponse.json({ received: true })
-  }
-
   const supabase = createServiceClient()
 
-  // Identify org by merchant ID
+  // Identify org by merchant ID first — we need the org's own secret key
   const { data: org } = await supabase
     .from('organizations')
-    .select('id')
+    .select('id, iyzico_secret_key, n8n_webhook_url')
     .eq('iyzico_merchant_id', payload.merchantId ?? '')
     .single()
 
   if (!org) {
     // Merchant not registered — not our tenant
+    return NextResponse.json({ received: true })
+  }
+
+  // Signature verification — always required, using org's own secret
+  const receivedSignature = request.headers.get('x-iyz-signature') ?? payload.token ?? ''
+  if (!receivedSignature) {
+    return NextResponse.json({ error: 'Missing webhook signature' }, { status: 400 })
+  }
+
+  const secretKey = org.iyzico_secret_key ?? process.env.IYZICO_SECRET_KEY!
+  const isValid = verifyWebhookSignature(
+    secretKey,
+    payload.paymentConversationId ?? '',
+    payload.iyziReferenceCode ?? '',
+    payload.merchantId ?? '',
+    payload.status ?? '',
+    receivedSignature
+  )
+  if (!isValid) {
+    return NextResponse.json({ error: 'Invalid webhook signature' }, { status: 400 })
+  }
+
+  // Only process failed payments
+  if (payload.status !== IYZICO_STATUS.FAILURE) {
     return NextResponse.json({ received: true })
   }
 
@@ -150,8 +151,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })
   }
 
-  // Trigger n8n recovery workflow
-  const n8nUrl = process.env.N8N_WEBHOOK_URL
+  // Trigger n8n recovery workflow — prefer org's own URL, fall back to global
+  const n8nUrl = org.n8n_webhook_url ?? process.env.N8N_WEBHOOK_URL
   if (n8nUrl && paymentEvent) {
     fetch(n8nUrl, {
       method: 'POST',

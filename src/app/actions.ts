@@ -138,22 +138,46 @@ export async function toggleSequenceActive(formData: FormData) {
 
 // ── Notification settings ────────────────────────────────────────────────────
 
-export async function saveNotificationSettings(formData: FormData) {
+export async function saveEmailNotificationSettings(formData: FormData) {
   const orgId = await getOrgId()
 
   const supabase = createServiceClient()
+  // Ensure row exists first, then update only email fields
   await supabase
     .from('notification_settings')
-    .upsert({
-      org_id: orgId,
+    .upsert({ org_id: orgId }, { onConflict: 'org_id', ignoreDuplicates: true })
+
+  await supabase
+    .from('notification_settings')
+    .update({
       email_on_failure: formData.get('email_on_failure') === 'on',
       email_on_recovery: formData.get('email_on_recovery') === 'on',
       daily_summary: formData.get('daily_summary') === 'on',
       weekly_report: formData.get('weekly_report') === 'on',
-      notification_email: formData.get('notification_email') as string || null,
-      slack_webhook_url: formData.get('slack_webhook_url') as string || null,
+      notification_email: (formData.get('notification_email') as string) || null,
       updated_at: new Date().toISOString(),
-    }, { onConflict: 'org_id' })
+    })
+    .eq('org_id', orgId)
+
+  revalidatePath('/dashboard/settings/notifications')
+}
+
+export async function saveSlackNotificationSettings(formData: FormData) {
+  const orgId = await getOrgId()
+
+  const supabase = createServiceClient()
+  // Ensure row exists first, then update only slack field
+  await supabase
+    .from('notification_settings')
+    .upsert({ org_id: orgId }, { onConflict: 'org_id', ignoreDuplicates: true })
+
+  await supabase
+    .from('notification_settings')
+    .update({
+      slack_webhook_url: (formData.get('slack_webhook_url') as string) || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('org_id', orgId)
 
   revalidatePath('/dashboard/settings/notifications')
 }
