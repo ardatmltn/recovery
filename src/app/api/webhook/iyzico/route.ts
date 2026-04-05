@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   // Identify org by merchant ID first — we need the org's own secret key
   const { data: org } = await supabase
     .from('organizations')
-    .select('id, iyzico_secret_key, n8n_webhook_url')
+    .select('id, iyzico_secret_key_encrypted, n8n_webhook_url')
     .eq('iyzico_merchant_id', payload.merchantId ?? '')
     .single()
 
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Missing webhook signature' }, { status: 400 })
   }
 
-  const secretKey = org.iyzico_secret_key ?? process.env.IYZICO_SECRET_KEY!
+  const secretKey = org.iyzico_secret_key_encrypted ?? process.env.IYZICO_SECRET_KEY!
   const isValid = verifyWebhookSignature(
     secretKey,
     payload.paymentConversationId ?? '',
