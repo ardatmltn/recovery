@@ -30,35 +30,35 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">{t.title}</h1>
-        <p className="text-muted-foreground">{t.subtitle}</p>
+        <h1 className="text-2xl font-bold text-white">{t.title}</h1>
+        <p className="text-zinc-400">{t.subtitle}</p>
       </div>
-      <div className="rounded-lg border overflow-hidden">
+      <div className="rounded-lg border border-zinc-800 overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-muted/50">
+          <thead className="bg-zinc-800/60">
             <tr>
-              <th className="text-left px-4 py-3 font-medium">{t.colCustomer}</th>
-              <th className="text-left px-4 py-3 font-medium">{t.colAmount}</th>
-              <th className="text-left px-4 py-3 font-medium">{t.colFailureReason}</th>
-              <th className="text-left px-4 py-3 font-medium">{t.colStatus}</th>
-              <th className="text-left px-4 py-3 font-medium">{t.colTime}</th>
+              <th className="text-left px-4 py-3 font-medium text-zinc-300">{t.colCustomer}</th>
+              <th className="text-left px-4 py-3 font-medium text-zinc-300">{t.colAmount}</th>
+              <th className="text-left px-4 py-3 font-medium text-zinc-300">{t.colFailureReason}</th>
+              <th className="text-left px-4 py-3 font-medium text-zinc-300">{t.colStatus}</th>
+              <th className="text-left px-4 py-3 font-medium text-zinc-300">{t.colTime}</th>
             </tr>
           </thead>
-          <tbody className="divide-y">
+          <tbody className="divide-y divide-zinc-800">
             {failures.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">{t.noFailures}</td>
+                <td colSpan={5} className="px-4 py-8 text-center text-zinc-500">{t.noFailures}</td>
               </tr>
             ) : (
               failures.map((event) => (
-                <tr key={event.id} className="hover:bg-muted/30 cursor-pointer">
+                <tr key={event.id} className="hover:bg-zinc-800/40 cursor-pointer transition-colors">
                   <td className="px-4 py-3">
                     <a href={`/dashboard/failures/${event.id}`} className="block">
-                      <p className="font-medium text-foreground">{event.customers?.name ?? '—'}</p>
+                      <p className="font-medium text-white">{event.customers?.name ?? '—'}</p>
                       <p className="text-xs text-zinc-400">{event.customers?.email ?? '—'}</p>
                     </a>
                   </td>
-                  <td className="px-4 py-3 font-semibold">{formatCurrency(event.amount, event.currency)}</td>
+                  <td className="px-4 py-3 font-semibold text-white">{formatCurrency(event.amount, event.currency)}</td>
                   <td className="px-4 py-3 text-zinc-300 max-w-xs truncate">{event.failure_code ?? '—'}</td>
                   <td className="px-4 py-3">
                     <Badge variant={STATUS_VARIANT[event.status] ?? 'outline'}>{event.status}</Badge>
