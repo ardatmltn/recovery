@@ -8,6 +8,7 @@ import {
   ArrowUpRight, Clock, CreditCard, UserPlus, RefreshCw, Bell,
 } from 'lucide-react'
 import { SetupGuide } from '@/components/dashboard/setup-guide'
+import { RealtimeUpdater } from '@/components/dashboard/realtime-updater'
 import Link from 'next/link'
 
 type RecentFailure = {
@@ -20,6 +21,7 @@ type RecentFailure = {
 }
 
 type Props = {
+  orgId: string
   fullName?: string
   showSetupGuide: boolean
   iyzicoConnected: boolean
@@ -42,7 +44,7 @@ const activityIconMap = [
 ]
 
 export function OverviewView({
-  fullName, showSetupGuide, iyzicoConnected, n8nConfigured,
+  orgId, fullName, showSetupGuide, iyzicoConnected, n8nConfigured,
   totalRecovered, totalFailed, recoveryRate, activeFailures,
   recoveredCount, analyticsLength, recentFailures,
 }: Props) {
@@ -94,6 +96,7 @@ export function OverviewView({
 
   return (
     <div className="space-y-6">
+      <RealtimeUpdater orgId={orgId} />
       <div>
         <h1 className="text-3xl font-bold text-white tracking-tight">{t.title}</h1>
         <p className="text-zinc-400 mt-1 text-sm">{t.welcome(fullName)}</p>

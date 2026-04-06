@@ -53,6 +53,7 @@ export default async function DashboardPage() {
 
   return (
     <OverviewView
+      orgId={orgId}
       fullName={userData?.full_name ?? undefined}
       showSetupGuide={showSetupGuide}
       iyzicoConnected={!!org?.iyzico_connected}
