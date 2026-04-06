@@ -79,7 +79,7 @@ export default async function FailuresPage() {
                       </Badge>
                     </td>
                     <td className="px-4 py-3 text-zinc-300">
-                      {formatRelativeTime(event.created_at)}
+                      {formatRelativeTime(event.created_at, lang)}
                     </td>
                   </tr>
                 )

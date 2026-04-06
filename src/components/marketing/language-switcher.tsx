@@ -1,6 +1,7 @@
 'use client'
 
 import { useLanguage, type Lang } from '@/lib/language-context'
+import { useRouter } from 'next/navigation'
 
 const langs: Record<Lang, { src: string; label: string }> = {
   tr: { src: 'https://flagcdn.com/w40/tr.png', label: 'TR' },
@@ -9,13 +10,19 @@ const langs: Record<Lang, { src: string; label: string }> = {
 
 export function LanguageSwitcher() {
   const { lang, setLang } = useLanguage()
+  const router = useRouter()
+
+  const handleLangChange = (l: Lang) => {
+    setLang(l)
+    router.refresh()
+  }
 
   return (
     <div className="flex items-center p-1 bg-zinc-900 border border-zinc-800 rounded-full gap-0.5">
       {(['tr', 'en'] as Lang[]).map((l) => (
         <button
           key={l}
-          onClick={() => setLang(l)}
+          onClick={() => handleLangChange(l)}
           title={langs[l].label}
           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
             lang === l

@@ -37,7 +37,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
     .order('created_at', { ascending: false })
     .limit(20)
 
-  const risk = getRiskLabel(customer.risk_score)
+  const risk = getRiskLabel(customer.risk_score, lang)
 
   return (
     <div className="space-y-6 max-w-3xl">

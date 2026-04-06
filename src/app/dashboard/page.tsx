@@ -205,7 +205,7 @@ export default async function DashboardPage() {
                     </div>
                     <div className="flex items-center gap-1 text-xs text-zinc-400 shrink-0">
                       <Clock className="w-3 h-3" />
-                      {formatRelativeTime(event.created_at)}
+                      {formatRelativeTime(event.created_at, lang)}
                     </div>
                   </Link>
                 )

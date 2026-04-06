@@ -74,7 +74,7 @@ export default async function FailureDetailPage({ params }: { params: Promise<{ 
           <CardHeader><CardTitle className="text-sm">{t.cardTimeline}</CardTitle></CardHeader>
           <CardContent className="text-sm">
             <p className="text-muted-foreground">{formatDateTime(event.created_at)}</p>
-            <p className="text-xs text-muted-foreground">{formatRelativeTime(event.created_at)}</p>
+            <p className="text-xs text-muted-foreground">{formatRelativeTime(event.created_at, lang)}</p>
           </CardContent>
         </Card>
       </div>

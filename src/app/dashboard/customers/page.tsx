@@ -50,7 +50,7 @@ export default async function CustomersPage() {
               </tr>
             ) : (
               customers.map((customer) => {
-                const risk = getRiskLabel(customer.risk_score)
+                const risk = getRiskLabel(customer.risk_score, lang)
                 return (
                   <tr key={customer.id} className="hover:bg-muted/30">
                     <td className="px-4 py-3">
@@ -71,7 +71,7 @@ export default async function CustomersPage() {
                     <td className="px-4 py-3">{formatCurrency(customer.total_recovered_amount)}</td>
                     <td className="px-4 py-3 text-muted-foreground">
                       {customer.last_payment_failed_at
-                        ? formatRelativeTime(customer.last_payment_failed_at)
+                        ? formatRelativeTime(customer.last_payment_failed_at, lang)
                         : '—'}
                     </td>
                   </tr>

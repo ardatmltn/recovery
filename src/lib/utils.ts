@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { formatDistanceToNow, format } from 'date-fns'
+import { tr, enUS } from 'date-fns/locale'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -22,17 +23,23 @@ export function formatDateTime(date: string | Date): string {
   return format(new Date(date), 'MMM d, yyyy HH:mm')
 }
 
-export function formatRelativeTime(date: string | Date): string {
-  return formatDistanceToNow(new Date(date), { addSuffix: true })
+export function formatRelativeTime(date: string | Date, lang: 'en' | 'tr' = 'en'): string {
+  return formatDistanceToNow(new Date(date), { addSuffix: true, locale: lang === 'tr' ? tr : enUS })
 }
 
-export function getRiskLabel(score: number): {
+const riskLabels = {
+  en: { high: 'High Risk', medium: 'Medium Risk', low: 'Low Risk' },
+  tr: { high: 'Yüksek Risk', medium: 'Orta Risk', low: 'Düşük Risk' },
+}
+
+export function getRiskLabel(score: number, lang: 'en' | 'tr' = 'en'): {
   label: string
   variant: 'destructive' | 'warning' | 'secondary'
 } {
-  if (score >= 70) return { label: 'High Risk', variant: 'destructive' }
-  if (score >= 40) return { label: 'Medium Risk', variant: 'warning' }
-  return { label: 'Low Risk', variant: 'secondary' }
+  const labels = riskLabels[lang]
+  if (score >= 70) return { label: labels.high, variant: 'destructive' }
+  if (score >= 40) return { label: labels.medium, variant: 'warning' }
+  return { label: labels.low, variant: 'secondary' }
 }
 
 export function slugify(text: string): string {
