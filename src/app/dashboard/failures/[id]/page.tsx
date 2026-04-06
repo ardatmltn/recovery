@@ -1,17 +1,30 @@
 import { notFound } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency, formatDateTime, formatRelativeTime } from '@/lib/utils'
+import { dashboardTranslations } from '@/lib/dashboard-translations'
+import type { Lang } from '@/lib/language-context'
 
 export default async function FailureDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const cookieStore = await cookies()
+  const lang = (cookieStore.get('recoverly-lang')?.value ?? 'en') as Lang
+  const t = dashboardTranslations[lang].failures.detail
+
+  const { data: userData } = await supabase
+    .from('users').select('org_id').eq('id', user!.id).single()
+  const orgId = userData?.org_id ?? ''
 
   const { data: event } = await supabase
     .from('payment_events')
     .select('*, customers(name, email, risk_score, provider_customer_id)')
     .eq('id', id)
+    .eq('org_id', orgId)
     .single()
 
   if (!event) notFound()
@@ -20,6 +33,7 @@ export default async function FailureDetailPage({ params }: { params: Promise<{ 
     .from('recovery_attempts')
     .select('*, message_templates(name, type)')
     .eq('payment_event_id', id)
+    .eq('org_id', orgId)
     .order('step_number', { ascending: true })
 
   const customer = event.customers as { name?: string; email?: string; risk_score?: number; provider_customer_id?: string } | null
@@ -27,13 +41,13 @@ export default async function FailureDetailPage({ params }: { params: Promise<{ 
   return (
     <div className="space-y-6 max-w-3xl">
       <div>
-        <h1 className="text-2xl font-bold">Payment Failure Detail</h1>
+        <h1 className="text-2xl font-bold">{t.title}</h1>
         <p className="text-muted-foreground text-sm">{event.provider_event_id}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <Card>
-          <CardHeader><CardTitle className="text-sm">Customer</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm">{t.cardCustomer}</CardTitle></CardHeader>
           <CardContent className="space-y-1 text-sm">
             <p className="font-medium">{customer?.name ?? '—'}</p>
             <p className="text-muted-foreground">{customer?.email ?? '—'}</p>
@@ -41,7 +55,7 @@ export default async function FailureDetailPage({ params }: { params: Promise<{ 
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="text-sm">Payment</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm">{t.cardPayment}</CardTitle></CardHeader>
           <CardContent className="space-y-1 text-sm">
             <p className="text-xl font-bold">{formatCurrency(event.amount, event.currency)}</p>
             <Badge>{event.status}</Badge>
@@ -49,7 +63,7 @@ export default async function FailureDetailPage({ params }: { params: Promise<{ 
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="text-sm">Failure</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm">{t.cardFailure}</CardTitle></CardHeader>
           <CardContent className="space-y-1 text-sm">
             <p className="font-medium">{event.failure_code ?? '—'}</p>
             <p className="text-muted-foreground">{event.failure_message ?? '—'}</p>
@@ -57,7 +71,7 @@ export default async function FailureDetailPage({ params }: { params: Promise<{ 
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="text-sm">Timeline</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm">{t.cardTimeline}</CardTitle></CardHeader>
           <CardContent className="text-sm">
             <p className="text-muted-foreground">{formatDateTime(event.created_at)}</p>
             <p className="text-xs text-muted-foreground">{formatRelativeTime(event.created_at)}</p>
@@ -67,10 +81,10 @@ export default async function FailureDetailPage({ params }: { params: Promise<{ 
 
       {/* Recovery timeline */}
       <Card>
-        <CardHeader><CardTitle>Recovery Timeline</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t.recoveryTimeline}</CardTitle></CardHeader>
         <CardContent>
           {!attempts || attempts.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No recovery attempts yet.</p>
+            <p className="text-sm text-muted-foreground">{t.noAttempts}</p>
           ) : (
             <div className="space-y-3">
               {attempts.map((attempt) => {
@@ -86,11 +100,11 @@ export default async function FailureDetailPage({ params }: { params: Promise<{ 
                         {template && <span className="text-xs text-muted-foreground">— {template.name}</span>}
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        Scheduled: {formatDateTime(attempt.scheduled_at)}
+                        {t.scheduled}: {formatDateTime(attempt.scheduled_at)}
                       </p>
                       {attempt.executed_at && (
                         <p className="text-xs text-muted-foreground">
-                          Executed: {formatDateTime(attempt.executed_at)}
+                          {t.executed}: {formatDateTime(attempt.executed_at)}
                         </p>
                       )}
                     </div>

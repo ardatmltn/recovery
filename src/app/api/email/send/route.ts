@@ -5,10 +5,10 @@ import { sendRecoveryEmail, renderTemplate } from '@/lib/resend'
 // Called by n8n Workflow 04 after a recovery attempt is scheduled
 // Payload: { attempt_id, org_id }
 export async function POST(request: Request) {
-  // Verify internal secret so only n8n can call this
+  // Verify internal key so only n8n can call this
   const authHeader = request.headers.get('authorization')
-  const internalSecret = process.env.INTERNAL_API_SECRET
-  if (internalSecret && authHeader !== `Bearer ${internalSecret}`) {
+  const internalKey = process.env.INTERNAL_API_KEY
+  if (!internalKey || authHeader !== `Bearer ${internalKey}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

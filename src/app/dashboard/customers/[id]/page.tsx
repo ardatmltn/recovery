@@ -1,17 +1,30 @@
 import { notFound } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { createServerClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency, formatDateTime, getRiskLabel } from '@/lib/utils'
+import { dashboardTranslations } from '@/lib/dashboard-translations'
+import type { Lang } from '@/lib/language-context'
 
 export default async function CustomerDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const cookieStore = await cookies()
+  const lang = (cookieStore.get('recoverly-lang')?.value ?? 'en') as Lang
+  const t = dashboardTranslations[lang].customers.detail
+
+  const { data: userData } = await supabase
+    .from('users').select('org_id').eq('id', user!.id).single()
+  const orgId = userData?.org_id ?? ''
 
   const { data: customer } = await supabase
     .from('customers')
     .select('*')
     .eq('id', id)
+    .eq('org_id', orgId)
     .single()
 
   if (!customer) notFound()
@@ -20,6 +33,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
     .from('payment_events')
     .select('id, amount, currency, status, failure_code, created_at')
     .eq('customer_id', id)
+    .eq('org_id', orgId)
     .order('created_at', { ascending: false })
     .limit(20)
 
@@ -34,7 +48,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
 
       <div className="grid grid-cols-2 gap-4">
         <Card>
-          <CardHeader><CardTitle className="text-sm">Contact</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm">{t.cardContact}</CardTitle></CardHeader>
           <CardContent className="text-sm space-y-1">
             <p>{customer.name ?? '—'}</p>
             <p className="text-muted-foreground">{customer.email ?? '—'}</p>
@@ -42,7 +56,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="text-sm">Risk Score</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm">{t.cardRiskScore}</CardTitle></CardHeader>
           <CardContent>
             <div className="flex items-center gap-3">
               <span className="text-3xl font-bold">{customer.risk_score}</span>
@@ -54,14 +68,14 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="text-sm">Failed Payments</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm">{t.cardFailedPayments}</CardTitle></CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{customer.total_failed_payments}</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="text-sm">Total Recovered</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm">{t.cardTotalRecovered}</CardTitle></CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{formatCurrency(customer.total_recovered_amount)}</p>
           </CardContent>
@@ -69,10 +83,10 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
       </div>
 
       <Card>
-        <CardHeader><CardTitle>Payment History</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t.paymentHistory}</CardTitle></CardHeader>
         <CardContent>
           {!events || events.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No payment history.</p>
+            <p className="text-sm text-muted-foreground">{t.noHistory}</p>
           ) : (
             <div className="space-y-2">
               {events.map((event) => (
