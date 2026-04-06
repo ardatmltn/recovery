@@ -3,10 +3,14 @@
 import { useState, useTransition } from 'react'
 import { testIyzicoConnection } from '@/app/actions'
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react'
+import { useLanguage } from '@/lib/language-context'
+import { dashboardTranslations } from '@/lib/dashboard-translations'
 
 export function IyzicoTestButton() {
   const [isPending, startTransition] = useTransition()
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null)
+  const { lang } = useLanguage()
+  const t = dashboardTranslations[lang].settings.integrations
 
   function handleTest() {
     setResult(null)
@@ -25,7 +29,7 @@ export function IyzicoTestButton() {
         className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-fit"
       >
         {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-        Test Connection
+        {t.testConnection}
       </button>
 
       {result && (

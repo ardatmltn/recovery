@@ -1,6 +1,9 @@
 import { createServerClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatRelativeTime } from '@/lib/utils'
+import { dashboardTranslations } from '@/lib/dashboard-translations'
+import type { Lang } from '@/lib/language-context'
 
 const STATUS_VARIANT: Record<string, 'destructive' | 'secondary' | 'outline' | 'default'> = {
   new: 'destructive',
@@ -13,6 +16,10 @@ const STATUS_VARIANT: Record<string, 'destructive' | 'secondary' | 'outline' | '
 export default async function FailuresPage() {
   const supabase = await createServerClient()
   const { data: { user } } = await supabase.auth.getUser()
+
+  const cookieStore = await cookies()
+  const lang = (cookieStore.get('recoverly-lang')?.value ?? 'en') as Lang
+  const t = dashboardTranslations[lang].failures
 
   const { data: userData } = await supabase
     .from('users').select('org_id').eq('id', user!.id).single()
@@ -27,26 +34,26 @@ export default async function FailuresPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Failed Payments</h1>
-        <p className="text-muted-foreground">All payment failures and their recovery status</p>
+        <h1 className="text-2xl font-bold">{t.title}</h1>
+        <p className="text-muted-foreground">{t.subtitle}</p>
       </div>
 
       <div className="rounded-lg border overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-muted/50">
             <tr>
-              <th className="text-left px-4 py-3 font-medium">Customer</th>
-              <th className="text-left px-4 py-3 font-medium">Amount</th>
-              <th className="text-left px-4 py-3 font-medium">Failure reason</th>
-              <th className="text-left px-4 py-3 font-medium">Status</th>
-              <th className="text-left px-4 py-3 font-medium">Time</th>
+              <th className="text-left px-4 py-3 font-medium">{t.colCustomer}</th>
+              <th className="text-left px-4 py-3 font-medium">{t.colAmount}</th>
+              <th className="text-left px-4 py-3 font-medium">{t.colFailureReason}</th>
+              <th className="text-left px-4 py-3 font-medium">{t.colStatus}</th>
+              <th className="text-left px-4 py-3 font-medium">{t.colTime}</th>
             </tr>
           </thead>
           <tbody className="divide-y">
             {!failures || failures.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
-                  No payment failures yet.
+                  {t.noFailures}
                 </td>
               </tr>
             ) : (

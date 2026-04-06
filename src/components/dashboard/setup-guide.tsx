@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
-import { CheckCircle2, Circle, Loader2, ArrowRight, Zap, Plug, Webhook, CreditCard } from 'lucide-react'
+import { CheckCircle2, Loader2, ArrowRight, Zap, Plug, Webhook, CreditCard } from 'lucide-react'
+import { useLanguage } from '@/lib/language-context'
+import { dashboardTranslations } from '@/lib/dashboard-translations'
 
 interface Props {
   iyzicoConnected: boolean
@@ -12,45 +14,41 @@ interface Props {
 export function SetupGuide({ iyzicoConnected, n8nConfigured }: Props) {
   const [simulating, startSimulate] = useTransition()
   const [simResult, setSimResult] = useState<string | null>(null)
+  const { lang } = useLanguage()
+  const t = dashboardTranslations[lang].setupGuide
+
+  const goToIntegrationsLink = (
+    <Link
+      href="/dashboard/settings/integrations"
+      className="group inline-flex items-center gap-1.5 text-xs font-semibold text-green-400 hover:text-green-300 transition-colors"
+    >
+      {t.goToIntegrations}
+      <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+    </Link>
+  )
 
   const steps = [
     {
       num: 1,
       icon: Plug,
-      title: 'Connect İyzico',
-      desc: 'Save your API Key and Secret Key in Integrations settings.',
+      title: t.step1Title,
+      desc: t.step1Desc,
       done: iyzicoConnected,
-      action: (
-        <Link
-          href="/dashboard/settings/integrations"
-          className="group inline-flex items-center gap-1.5 text-xs font-semibold text-green-400 hover:text-green-300 transition-colors"
-        >
-          Go to Integrations
-          <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-        </Link>
-      ),
+      action: goToIntegrationsLink,
     },
     {
       num: 2,
       icon: Webhook,
-      title: 'Configure n8n Webhook',
-      desc: 'Enter your n8n instance webhook URL to enable automation.',
+      title: t.step2Title,
+      desc: t.step2Desc,
       done: n8nConfigured,
-      action: (
-        <Link
-          href="/dashboard/settings/integrations"
-          className="group inline-flex items-center gap-1.5 text-xs font-semibold text-green-400 hover:text-green-300 transition-colors"
-        >
-          Go to Integrations
-          <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-        </Link>
-      ),
+      action: goToIntegrationsLink,
     },
     {
       num: 3,
       icon: CreditCard,
-      title: 'Simulate a failed payment',
-      desc: 'Create a test failure to verify your dashboard is working.',
+      title: t.step3Title,
+      desc: t.step3Desc,
       done: false,
       action: (
         <div className="flex flex-col gap-2">
@@ -82,7 +80,7 @@ export function SetupGuide({ iyzicoConnected, n8nConfigured }: Props) {
             <span className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent" />
             <span className="relative flex items-center gap-1.5">
               {simulating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
-              {simulating ? 'Creating…' : 'Simulate payment failure'}
+              {simulating ? t.simulating : t.simulate}
             </span>
           </button>
           {simResult && (
@@ -107,8 +105,8 @@ export function SetupGuide({ iyzicoConnected, n8nConfigured }: Props) {
             <Zap className="w-3.5 h-3.5 text-green-400" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">Get started with Recoverly</p>
-            <p className="text-[11px] text-zinc-400">{completedCount}/3 steps completed</p>
+            <p className="text-sm font-semibold text-white">{t.title}</p>
+            <p className="text-[11px] text-zinc-400">{t.stepsCompleted(completedCount)}</p>
           </div>
         </div>
         <span className="text-xs font-bold text-zinc-400">{progressPct}%</span>

@@ -3,22 +3,26 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-
-const tabs = [
-  { href: '/dashboard/settings/general', label: 'General' },
-  { href: '/dashboard/settings/integrations', label: 'Integrations' },
-  { href: '/dashboard/settings/notifications', label: 'Notifications' },
-  { href: '/dashboard/settings/billing', label: 'Billing' },
-]
+import { useLanguage } from '@/lib/language-context'
+import { dashboardTranslations } from '@/lib/dashboard-translations'
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const { lang } = useLanguage()
+  const t = dashboardTranslations[lang].settings
+
+  const tabs = [
+    { href: '/dashboard/settings/general', label: t.tabs.general },
+    { href: '/dashboard/settings/integrations', label: t.tabs.integrations },
+    { href: '/dashboard/settings/notifications', label: t.tabs.notifications },
+    { href: '/dashboard/settings/billing', label: t.tabs.billing },
+  ]
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display font-bold text-white text-2xl">Settings</h1>
-        <p className="text-zinc-500 text-sm mt-0.5">Manage your account and integrations</p>
+        <h1 className="font-display font-bold text-white text-2xl">{t.title}</h1>
+        <p className="text-zinc-500 text-sm mt-0.5">{t.subtitle}</p>
       </div>
       <div className="flex gap-1 border-b border-zinc-800">
         {tabs.map(({ href, label }) => (

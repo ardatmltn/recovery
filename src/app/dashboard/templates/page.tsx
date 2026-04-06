@@ -1,10 +1,17 @@
 import { createServerClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
 import { Mail, Sparkles, Info } from 'lucide-react'
 import { saveTemplate } from '@/app/actions'
+import { dashboardTranslations } from '@/lib/dashboard-translations'
+import type { Lang } from '@/lib/language-context'
 
 export default async function TemplatesPage() {
   const supabase = await createServerClient()
   const { data: { user } } = await supabase.auth.getUser()
+
+  const cookieStore = await cookies()
+  const lang = (cookieStore.get('recoverly-lang')?.value ?? 'en') as Lang
+  const t = dashboardTranslations[lang].templates
 
   const { data: userData } = await supabase
     .from('users').select('org_id').eq('id', user!.id).single()
@@ -19,27 +26,27 @@ export default async function TemplatesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Message Templates</h1>
-        <p className="text-muted-foreground text-sm">Customize the emails sent to your customers during recovery sequences.</p>
+        <h1 className="text-2xl font-bold">{t.title}</h1>
+        <p className="text-muted-foreground text-sm">{t.subtitle}</p>
       </div>
 
       {/* Variable reference */}
       <div className="flex items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-900/40 px-4 py-3">
         <Info className="w-4 h-4 text-zinc-400 mt-0.5 shrink-0" />
         <p className="text-xs text-zinc-400 leading-relaxed">
-          Available variables:{' '}
+          {t.availableVars}{' '}
           {['{{customer_name}}', '{{amount}}', '{{org_name}}', '{{failure_reason}}'].map((v) => (
             <code key={v} className="mx-1 px-1.5 py-0.5 bg-zinc-800 rounded text-green-400 text-[11px]">{v}</code>
           ))}
-          {' '}· Use{' '}
+          {' '}· {t.use}{' '}
           <code className="mx-1 px-1.5 py-0.5 bg-zinc-800 rounded text-green-400 text-[11px]">[Button text]</code>
-          {' '}to add a call-to-action button.
+          {' '}{t.ctaNote}
         </p>
       </div>
 
       {!templates || templates.length === 0 ? (
         <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 py-12 text-center">
-          <p className="text-muted-foreground text-sm">No templates yet. They will be created automatically on first login.</p>
+          <p className="text-muted-foreground text-sm">{t.noTemplates}</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -53,9 +60,9 @@ export default async function TemplatesPage() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white">
-                      Step {idx + 2} Email
+                      {t.stepEmail(idx + 2)}
                       {template.is_default && (
-                        <span className="ml-2 text-[10px] font-normal text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded">default</span>
+                        <span className="ml-2 text-[10px] font-normal text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded">{t.defaultBadge}</span>
                       )}
                     </p>
                     <p className="text-xs text-zinc-500">{template.name}</p>
@@ -64,7 +71,7 @@ export default async function TemplatesPage() {
                 {template.ai_enhanced && (
                   <div className="flex items-center gap-1 text-xs text-purple-400">
                     <Sparkles className="w-3 h-3" />
-                    AI enhanced
+                    {t.aiEnhanced}
                   </div>
                 )}
               </div>
@@ -74,7 +81,7 @@ export default async function TemplatesPage() {
                 <input type="hidden" name="id" value={template.id} />
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-zinc-400">Template name</label>
+                  <label className="text-xs font-medium text-zinc-400">{t.templateName}</label>
                   <input
                     name="name"
                     defaultValue={template.name}
@@ -83,7 +90,7 @@ export default async function TemplatesPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-zinc-400">Subject line</label>
+                  <label className="text-xs font-medium text-zinc-400">{t.subjectLine}</label>
                   <input
                     name="subject"
                     defaultValue={template.subject ?? ''}
@@ -92,7 +99,7 @@ export default async function TemplatesPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-zinc-400">Body</label>
+                  <label className="text-xs font-medium text-zinc-400">{t.body}</label>
                   <textarea
                     name="body"
                     defaultValue={template.body ?? ''}
@@ -106,7 +113,7 @@ export default async function TemplatesPage() {
                     type="submit"
                     className="px-4 py-2 bg-green-500 hover:bg-green-400 text-black text-sm font-semibold rounded-lg transition-colors"
                   >
-                    Save template
+                    {t.saveTemplate}
                   </button>
                 </div>
               </form>

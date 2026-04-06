@@ -1,10 +1,17 @@
 import { createServerClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatRelativeTime, getRiskLabel } from '@/lib/utils'
+import { dashboardTranslations } from '@/lib/dashboard-translations'
+import type { Lang } from '@/lib/language-context'
 
 export default async function CustomersPage() {
   const supabase = await createServerClient()
   const { data: { user } } = await supabase.auth.getUser()
+
+  const cookieStore = await cookies()
+  const lang = (cookieStore.get('recoverly-lang')?.value ?? 'en') as Lang
+  const t = dashboardTranslations[lang].customers
 
   const { data: userData } = await supabase
     .from('users').select('org_id').eq('id', user!.id).single()
@@ -19,26 +26,26 @@ export default async function CustomersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Customers</h1>
-        <p className="text-muted-foreground">Sorted by risk score</p>
+        <h1 className="text-2xl font-bold">{t.title}</h1>
+        <p className="text-muted-foreground">{t.subtitle}</p>
       </div>
 
       <div className="rounded-lg border overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-muted/50">
             <tr>
-              <th className="text-left px-4 py-3 font-medium">Customer</th>
-              <th className="text-left px-4 py-3 font-medium">Risk</th>
-              <th className="text-left px-4 py-3 font-medium">Failed payments</th>
-              <th className="text-left px-4 py-3 font-medium">Recovered</th>
-              <th className="text-left px-4 py-3 font-medium">Last failure</th>
+              <th className="text-left px-4 py-3 font-medium">{t.colCustomer}</th>
+              <th className="text-left px-4 py-3 font-medium">{t.colRisk}</th>
+              <th className="text-left px-4 py-3 font-medium">{t.colFailedPayments}</th>
+              <th className="text-left px-4 py-3 font-medium">{t.colRecovered}</th>
+              <th className="text-left px-4 py-3 font-medium">{t.colLastFailure}</th>
             </tr>
           </thead>
           <tbody className="divide-y">
             {!customers || customers.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
-                  No customers yet.
+                  {t.noCustomers}
                 </td>
               </tr>
             ) : (

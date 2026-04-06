@@ -15,20 +15,24 @@ import {
   ChevronsRight,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-const navItems = [
-  { href: '/dashboard', label: 'Overview', icon: LayoutDashboard, exact: true },
-  { href: '/dashboard/failures', label: 'Failures', icon: AlertCircle, badge: true },
-  { href: '/dashboard/customers', label: 'Customers', icon: Users },
-  { href: '/dashboard/sequences', label: 'Sequences', icon: GitBranch },
-  { href: '/dashboard/templates', label: 'Templates', icon: Mail },
-  { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
-  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
-]
+import { useLanguage } from '@/lib/language-context'
+import { dashboardTranslations } from '@/lib/dashboard-translations'
 
 export function Sidebar() {
   const pathname = usePathname()
   const [open, setOpen] = useState(true)
+  const { lang } = useLanguage()
+  const t = dashboardTranslations[lang].sidebar
+
+  const navItems = [
+    { href: '/dashboard', label: t.overview, icon: LayoutDashboard, exact: true },
+    { href: '/dashboard/failures', label: t.failures, icon: AlertCircle, badge: true },
+    { href: '/dashboard/customers', label: t.customers, icon: Users },
+    { href: '/dashboard/sequences', label: t.sequences, icon: GitBranch },
+    { href: '/dashboard/templates', label: t.templates, icon: Mail },
+    { href: '/dashboard/analytics', label: t.analytics, icon: BarChart3 },
+    { href: '/dashboard/settings', label: t.settings, icon: Settings },
+  ]
 
   useEffect(() => {
     const saved = localStorage.getItem('sidebar-open')
@@ -102,10 +106,10 @@ export function Sidebar() {
             href="/pricing"
             className="block px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800 transition-colors group"
           >
-            <p className="text-zinc-500 text-[10px] uppercase tracking-widest mb-0.5">Plan</p>
+            <p className="text-zinc-500 text-[10px] uppercase tracking-widest mb-0.5">{t.plan}</p>
             <div className="flex items-center justify-between">
               <p className="text-white text-xs font-semibold">Starter</p>
-              <span className="text-green-500 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity">Upgrade →</span>
+              <span className="text-green-500 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity">{t.upgrade} →</span>
             </div>
           </Link>
         </div>
@@ -126,7 +130,7 @@ export function Sidebar() {
             />
           </div>
           {open && (
-            <span className="ml-2 text-sm font-medium text-zinc-500">Hide</span>
+            <span className="ml-2 text-sm font-medium text-zinc-500">{t.hide}</span>
           )}
         </div>
       </button>

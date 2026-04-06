@@ -22,6 +22,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const setLang = (l: Lang) => {
     setLangState(l)
     localStorage.setItem('recoverly-lang', l)
+    document.cookie = `recoverly-lang=${l}; path=/; max-age=31536000; SameSite=Lax`
   }
 
   return (
