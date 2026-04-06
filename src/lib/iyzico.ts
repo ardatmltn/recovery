@@ -188,4 +188,70 @@ export async function testConnectionWithConfig(
   }
 }
 
-export const iyzico = { retryPaymentWithToken, verifyWebhookSignature, testConnectionWithConfig }
+// Initialize İyzico Checkout Form for Recoverly's own subscription plans
+export async function initializeCheckoutForm(params: {
+  conversationId: string
+  price: string
+  currency: string
+  callbackUrl: string
+  buyer: {
+    id: string
+    name: string
+    surname: string
+    email: string
+  }
+  planName: string
+}): Promise<{ status: string; token?: string; checkoutFormContent?: string; errorMessage?: string }> {
+  const minimalAddress = {
+    contactName: `${params.buyer.name} ${params.buyer.surname}`,
+    city: 'Istanbul',
+    country: 'Turkey',
+    address: 'N/A',
+  }
+  const minimalBuyer = {
+    ...params.buyer,
+    identityNumber: '11111111111',
+    registrationAddress: 'N/A',
+    city: 'Istanbul',
+    country: 'Turkey',
+    ip: '85.34.78.112',
+  }
+
+  return request('/payment/iyzipos/initialize', {
+    locale: 'tr',
+    conversationId: params.conversationId,
+    price: params.price,
+    paidPrice: params.price,
+    currency: params.currency,
+    basketId: params.conversationId,
+    enabledInstallments: [1],
+    callbackUrl: params.callbackUrl,
+    buyer: minimalBuyer,
+    shippingAddress: minimalAddress,
+    billingAddress: minimalAddress,
+    basketItems: [
+      {
+        id: params.conversationId,
+        name: `Recoverly ${params.planName} Plan`,
+        category1: 'Software',
+        itemType: 'VIRTUAL',
+        price: params.price,
+      },
+    ],
+  })
+}
+
+// Retrieve checkout form result after callback
+export async function retrieveCheckoutForm(token: string): Promise<{
+  status: string
+  paymentStatus?: string
+  conversationId?: string
+  errorMessage?: string
+}> {
+  return request('/payment/iyzipos/retrieve', {
+    locale: 'tr',
+    token,
+  })
+}
+
+export const iyzico = { retryPaymentWithToken, verifyWebhookSignature, testConnectionWithConfig, initializeCheckoutForm, retrieveCheckoutForm }

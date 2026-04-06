@@ -132,6 +132,7 @@ export default function PricingPage() {
 
   const [selectedPlan, setSelectedPlan] = useState(1)
   const [checkingOut, setCheckingOut] = useState(false)
+  const [checkoutHtml, setCheckoutHtml] = useState<string | null>(null)
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [planCenterX, setPlanCenterX] = useState([0.155, 0.5, 0.845])
 
@@ -147,8 +148,10 @@ export default function PricingPage() {
         router.push('/register')
         return
       }
-      const data = await res.json() as { url?: string }
-      if (data.url) window.location.href = data.url
+      const data = await res.json() as { checkoutFormContent?: string; error?: string }
+      if (data.checkoutFormContent) {
+        setCheckoutHtml(data.checkoutFormContent)
+      }
     } catch {
       router.push('/register')
     } finally {
@@ -174,6 +177,20 @@ export default function PricingPage() {
 
   return (
     <div className="relative min-h-[100dvh] bg-[#09090B]">
+      {checkoutHtml && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-lg mx-4 rounded-2xl overflow-hidden bg-white">
+            <button
+              onClick={() => setCheckoutHtml(null)}
+              className="absolute top-3 right-3 z-10 text-zinc-500 hover:text-zinc-900 text-xl font-bold leading-none"
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <div dangerouslySetInnerHTML={{ __html: checkoutHtml }} />
+          </div>
+        </div>
+      )}
       <ShaderCanvas targetX={planCenterX[selectedPlan]} />
 
       <div className="relative" style={{ zIndex: 2 }}>
