@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { verifyWebhookSignature, IYZICO_STATUS, IYZICO_FAILURE_CODES } from '@/lib/iyzico'
+import { calculateRiskScore } from '@/lib/risk-score'
 import type { Json } from '@/types/database'
 
 // İyzico webhook payload types
@@ -149,6 +150,32 @@ export async function POST(request: Request) {
   if (insertError) {
     console.error('Failed to insert iyzico payment event:', insertError)
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })
+  }
+
+  // Update customer risk score after new failure
+  if (customerId) {
+    const { data: stats } = await supabase
+      .from('payment_events')
+      .select('status, amount')
+      .eq('org_id', orgId)
+      .eq('customer_id', customerId)
+
+    const failureCount = stats?.filter((e) => e.status !== 'recovered').length ?? 0
+    const recoveredCount = stats?.filter((e) => e.status === 'recovered').length ?? 0
+    const totalFailedAmount = stats?.filter((e) => e.status !== 'recovered').reduce((s, e) => s + (e.amount ?? 0), 0) ?? 0
+
+    const riskScore = calculateRiskScore({
+      failureCount,
+      recoveredCount,
+      lastFailedAt: new Date().toISOString(),
+      totalFailedAmount,
+    })
+
+    await supabase
+      .from('customers')
+      .update({ risk_score: riskScore, updated_at: new Date().toISOString() })
+      .eq('id', customerId)
+      .eq('org_id', orgId)
   }
 
   // Trigger n8n recovery workflow — prefer org's own URL, fall back to global

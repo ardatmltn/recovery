@@ -1,15 +1,16 @@
 'use client'
 
-import Link from 'next/link'
-import { Check } from 'lucide-react'
+import { Check, Loader2 } from 'lucide-react'
 import { MarketingFooter } from '@/components/marketing/footer'
 import { useRef, useEffect, useState } from 'react'
 import { MarketingNav } from '@/components/marketing/nav'
 import { RippleButton } from '@/components/ui/multi-type-ripple-buttons'
 import { useLanguage } from '@/lib/language-context'
 import { translations } from '@/components/marketing/translations'
+import { useRouter } from 'next/navigation'
 
 const PLAN_NAMES = ['Starter', 'Growth', 'Pro']
+const PLAN_KEYS = ['starter', 'growth', 'pro'] as const
 const PLAN_PRICES = ['59', '99', '149']
 
 function ShaderCanvas({ targetX }: { targetX: number }) {
@@ -127,10 +128,33 @@ function ShaderCanvas({ targetX }: { targetX: number }) {
 export default function PricingPage() {
   const { lang } = useLanguage()
   const tx = translations[lang].pricingPage
+  const router = useRouter()
 
   const [selectedPlan, setSelectedPlan] = useState(1)
+  const [checkingOut, setCheckingOut] = useState(false)
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [planCenterX, setPlanCenterX] = useState([0.155, 0.5, 0.845])
+
+  const handleCheckout = async (planIndex: number) => {
+    setCheckingOut(true)
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: PLAN_KEYS[planIndex] }),
+      })
+      if (res.status === 401) {
+        router.push('/register')
+        return
+      }
+      const data = await res.json() as { url?: string }
+      if (data.url) window.location.href = data.url
+    } catch {
+      router.push('/register')
+    } finally {
+      setCheckingOut(false)
+    }
+  }
 
   useEffect(() => {
     const updateCenters = () => {
@@ -218,19 +242,22 @@ export default function PricingPage() {
                     ))}
                   </ul>
 
-                  <Link href="/register" className="block mt-auto" onClick={(e) => e.stopPropagation()}>
+                  <div className="block mt-auto" onClick={(e) => e.stopPropagation()}>
                     <RippleButton
                       rippleColor={isSelected ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.15)'}
+                      onClick={() => handleCheckout(i)}
+                      disabled={checkingOut}
                       className={[
-                        'w-full py-3 rounded-xl font-semibold text-sm',
+                        'w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2',
                         isSelected
                           ? 'bg-green-500 hover:bg-green-400 text-black'
                           : 'bg-white/10 hover:bg-white/20 text-white border border-white/20',
                       ].join(' ')}
                     >
+                      {checkingOut && isSelected && <Loader2 className="w-4 h-4 animate-spin" />}
                       {tx.cta}
                     </RippleButton>
-                  </Link>
+                  </div>
                 </button>
               )
             })}

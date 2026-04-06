@@ -135,6 +135,8 @@ const dashboardTranslations = {
       subjectLine: 'Subject line',
       body: 'Body',
       saveTemplate: 'Save template',
+      enhanceWithAI: 'Enhance with AI',
+      enhancing: 'Enhancing...',
     },
     analytics: {
       title: 'Analytics',
@@ -345,6 +347,8 @@ const dashboardTranslations = {
       subjectLine: 'Konu satırı',
       body: 'İçerik',
       saveTemplate: 'Şablonu kaydet',
+      enhanceWithAI: 'AI ile Geliştir',
+      enhancing: 'Geliştiriliyor...',
     },
     analytics: {
       title: 'Analitik',
