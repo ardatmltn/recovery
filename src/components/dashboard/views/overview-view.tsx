@@ -3,10 +3,7 @@
 import { useLanguage } from '@/lib/language-context'
 import { dashboardTranslations } from '@/lib/dashboard-translations'
 import { formatCurrency, formatRelativeTime } from '@/lib/utils'
-import {
-  DollarSign, AlertCircle, TrendingUp, Activity,
-  ArrowUpRight, Clock, CreditCard, UserPlus, RefreshCw, Bell,
-} from 'lucide-react'
+import { TrendingUp, AlertTriangle, Timer, RefreshCw, Mail, Plus } from 'lucide-react'
 import { SetupGuide } from '@/components/dashboard/setup-guide'
 import { RealtimeUpdater } from '@/components/dashboard/realtime-updater'
 import Link from 'next/link'
@@ -35,13 +32,23 @@ type Props = {
   recentFailures: RecentFailure[]
 }
 
-const activityIconMap = [
-  { icon: CreditCard, color: 'text-green-400', bg: 'bg-green-500/10' },
-  { icon: UserPlus, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-  { icon: RefreshCw, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-  { icon: Bell, color: 'text-orange-400', bg: 'bg-orange-500/10' },
-  { icon: AlertCircle, color: 'text-red-400', bg: 'bg-red-500/10' },
-]
+const BAR_HEIGHTS = [40, 55, 35, 65, 85, 75, 90, 60, 50, 70, 80, 45]
+
+function getFailureBadge(amount: number, createdAt: string): { label: string; className: string } {
+  const minutesAgo = (Date.now() - new Date(createdAt).getTime()) / 60000
+  if (amount >= 500) return { label: 'YÜKSEK DEĞER', className: 'bg-red-500/20 text-red-400' }
+  if (minutesAgo < 10) return { label: 'KRİTİK', className: 'bg-red-500/20 text-red-400' }
+  return { label: 'BEKLEMEDE', className: 'bg-zinc-700/60 text-zinc-400' }
+}
+
+function CustomerAvatar({ name, email }: { name?: string; email?: string }) {
+  const initials = (name || email || '?').slice(0, 2).toUpperCase()
+  return (
+    <div className="w-12 h-12 rounded-full bg-[#9fff88]/10 flex items-center justify-center text-[#9fff88] font-black text-sm shrink-0">
+      {initials}
+    </div>
+  )
+}
 
 export function OverviewView({
   orgId, fullName, showSetupGuide, iyzicoConnected, n8nConfigured,
@@ -51,178 +58,249 @@ export function OverviewView({
   const { lang } = useLanguage()
   const t = dashboardTranslations[lang].overview
 
-  const metrics = [
-    {
-      label: t.metrics.recoveredRevenue,
-      value: formatCurrency(totalRecovered),
-      trend: '+0%',
-      trendLabel: t.metrics.fromLastMonth,
-      icon: DollarSign,
-      iconColor: 'text-blue-400',
-      iconBg: 'bg-blue-500/10',
-      trendColor: 'text-green-400',
-    },
-    {
-      label: t.metrics.activeFailures,
-      value: String(activeFailures),
-      trend: t.metrics.newCount,
-      trendLabel: t.metrics.thisWeek,
-      icon: AlertCircle,
-      iconColor: 'text-green-400',
-      iconBg: 'bg-green-500/10',
-      trendColor: 'text-green-400',
-    },
-    {
-      label: t.metrics.recoveryRate,
-      value: `${recoveryRate}%`,
-      trend: '+0%',
-      trendLabel: t.metrics.fromLastWeek,
-      icon: TrendingUp,
-      iconColor: 'text-purple-400',
-      iconBg: 'bg-purple-500/10',
-      trendColor: 'text-green-400',
-    },
-    {
-      label: t.metrics.atRiskAmount,
-      value: formatCurrency(totalFailed),
-      trend: t.metrics.unrecovered,
-      trendLabel: t.metrics.needsAttention,
-      icon: Activity,
-      iconColor: 'text-orange-400',
-      iconBg: 'bg-orange-500/10',
-      trendColor: 'text-orange-400',
-    },
-  ]
+  const retrySuccessRate = recoveredCount > 0 && activeFailures > 0
+    ? Math.round((recoveredCount / (recoveredCount + activeFailures)) * 100)
+    : recoveredCount > 0 ? 100 : 0
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <RealtimeUpdater orgId={orgId} />
-      <div>
-        <h1 className="text-3xl font-bold text-white tracking-tight">{t.title}</h1>
-        <p className="text-zinc-400 mt-1 text-sm">{t.welcome(fullName)}</p>
-      </div>
 
       {showSetupGuide && (
         <SetupGuide iyzicoConnected={iyzicoConnected} n8nConfigured={n8nConfigured} />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map(({ label, value, trend, trendLabel, icon: Icon, iconColor, iconBg, trendColor }) => (
-          <div key={label} className="p-6 rounded-2xl border border-zinc-800 bg-zinc-900 hover:shadow-md hover:border-zinc-700 transition-all duration-200">
-            <div className="flex items-center justify-between mb-4">
-              <div className={`p-2 ${iconBg} rounded-lg`}>
-                <Icon className={`h-5 w-5 ${iconColor}`} />
-              </div>
-              <ArrowUpRight className="h-4 w-4 text-green-400" />
-            </div>
-            <h3 className="font-medium text-zinc-400 mb-1 text-sm">{label}</h3>
-            <p className="text-2xl font-bold text-white">{value}</p>
-            <p className={`text-sm mt-1 ${trendColor}`}>
-              {trend} <span className="text-zinc-500">{trendLabel}</span>
-            </p>
+      {/* Hero Summary */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Card 1 */}
+        <div className="bg-[#1a1919] p-8 rounded-xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-[#9fff88] shadow-[0_0_15px_rgba(159,255,136,0.5)]" />
+          <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase mb-2">
+            Kurtarılan Toplam
+          </p>
+          <h2 className="text-5xl font-black tracking-tight text-white mb-2">
+            {formatCurrency(totalRecovered)}
+          </h2>
+          <div className="flex items-center gap-2 text-[#9fff88] text-sm font-bold">
+            <TrendingUp className="w-4 h-4" />
+            <span>{t.metrics.fromLastMonth}</span>
           </div>
-        ))}
+        </div>
+
+        {/* Card 2 */}
+        <div className="bg-[#1a1919] p-8 rounded-xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-[#9fff88]/40" />
+          <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase mb-2">
+            Kurtarma Oranı
+          </p>
+          <h2 className="text-5xl font-black tracking-tight text-white mb-2">
+            {recoveryRate}%
+          </h2>
+          <div className="flex items-center gap-2 text-[#9fff88] text-sm font-bold">
+            <span className="text-lg">⚡</span>
+            <span>Sektör ortalamasının üzerinde</span>
+          </div>
+        </div>
+
+        {/* Card 3 */}
+        <div className="bg-[#1a1919] p-8 rounded-xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-red-500 shadow-[0_0_15px_rgba(255,115,81,0.5)]" />
+          <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase mb-2">
+            Aktif Hatalar
+          </p>
+          <h2 className="text-5xl font-black tracking-tight text-white mb-2">
+            {activeFailures}
+          </h2>
+          <div className="flex items-center gap-2 text-red-400 text-sm font-bold">
+            <AlertTriangle className="w-4 h-4" />
+            <span>Müdahale bekliyor</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Bento: Chart + Quick Stats */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Chart */}
+        <div className="lg:col-span-2 bg-[#1a1919] rounded-xl p-8">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <h3 className="text-2xl font-extrabold text-white mb-1">Kurtarma Trendleri</h3>
+              <p className="text-sm text-zinc-500">Son 30 günlük performans akışı</p>
+            </div>
+            <div className="flex bg-[#262626] p-1 rounded-lg">
+              <button className="px-4 py-1.5 text-xs font-bold text-black bg-[#9fff88] rounded-md shadow-sm">
+                GÜNLÜK
+              </button>
+              <button className="px-4 py-1.5 text-xs font-bold text-zinc-500 hover:text-white transition-colors">
+                HAFTALIK
+              </button>
+            </div>
+          </div>
+
+          <div className="h-64 flex items-end justify-between gap-2">
+            {BAR_HEIGHTS.map((h, i) => {
+              const isHighest = h === Math.max(...BAR_HEIGHTS)
+              return (
+                <div
+                  key={i}
+                  className={`w-full rounded-t-sm transition-all ${
+                    isHighest
+                      ? 'bg-[#9fff88]/40 border-t-2 border-[#9fff88] hover:bg-[#9fff88]/60'
+                      : i >= BAR_HEIGHTS.length - 3
+                      ? 'bg-[#9fff88]/20 hover:bg-[#9fff88]/40'
+                      : 'bg-[#9fff88]/10 hover:bg-[#9fff88]/30'
+                  }`}
+                  style={{ height: `${h}%` }}
+                />
+              )
+            })}
+          </div>
+
+          <div className="flex justify-between mt-6 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+            <span>21 gün önce</span>
+            <span>14 gün önce</span>
+            <span>7 gün önce</span>
+            <span>Bugün</span>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="bg-[#201f1f] rounded-xl p-8 space-y-8">
+          <h3 className="text-xl font-extrabold text-white">Hızlı İstatistikler</h3>
+
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-[#262626] flex items-center justify-center text-[#9fff88]">
+                  <Timer className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs text-zinc-500 font-medium">Aktif Başarısızlık</p>
+                  <p className="text-lg font-bold text-white">{activeFailures}</p>
+                </div>
+              </div>
+              <div className="h-1.5 w-12 bg-[#262626] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#9fff88] rounded-full"
+                  style={{ width: `${Math.min(activeFailures * 2, 100)}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-[#262626] flex items-center justify-center text-[#9fff88]">
+                  <RefreshCw className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs text-zinc-500 font-medium">Kurtarma Başarısı</p>
+                  <p className="text-lg font-bold text-white">{retrySuccessRate}%</p>
+                </div>
+              </div>
+              <div className="h-1.5 w-12 bg-[#262626] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#9fff88] rounded-full"
+                  style={{ width: `${retrySuccessRate}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-[#262626] flex items-center justify-center text-[#9fff88]">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs text-zinc-500 font-medium">Kurtarılan Ödeme</p>
+                  <p className="text-lg font-bold text-white">{recoveredCount}</p>
+                </div>
+              </div>
+              <div className="h-1.5 w-12 bg-[#262626] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#9fff88] rounded-full"
+                  style={{ width: `${Math.min(recoveredCount * 5, 100)}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          <Link
+            href="/dashboard/analytics"
+            className="w-full py-4 bg-[#9fff88] text-black font-black rounded-xl flex items-center justify-center hover:bg-[#8aee72] active:scale-95 transition-all shadow-lg shadow-[#9fff88]/20"
+          >
+            ANALİTİĞE GİT
+          </Link>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-white">{t.recentFailures}</h3>
-            <Link href="/dashboard/failures" className="text-sm text-blue-400 hover:text-blue-300 font-medium transition-colors">
-              {t.viewAll}
-            </Link>
-          </div>
+      {/* Recent Failures */}
+      <section className="bg-[#1a1919] rounded-xl overflow-hidden">
+        <div className="px-8 py-6 flex justify-between items-center bg-[#131313]">
+          <h3 className="text-xl font-extrabold text-white">{t.recentFailures}</h3>
+          <Link href="/dashboard/failures" className="text-[#9fff88] text-xs font-bold hover:underline">
+            {t.viewAll}
+          </Link>
+        </div>
+
+        <div className="divide-y divide-zinc-800/50">
           {recentFailures.length === 0 ? (
-            <div className="py-10 text-center">
+            <div className="px-8 py-12 text-center">
               <p className="text-zinc-500 text-sm">{t.noFailures}</p>
             </div>
           ) : (
-            <div className="space-y-1">
-              {recentFailures.map((event, i) => {
-                const customer = event.customers
-                const iconDef = activityIconMap[i % activityIconMap.length]
-                const IconComp = iconDef.icon
-                return (
-                  <Link key={event.id} href={`/dashboard/failures/${event.id}`}
-                    className="flex items-center gap-4 p-3 rounded-xl hover:bg-zinc-800/60 transition-colors cursor-pointer">
-                    <div className={`p-2 rounded-lg ${iconDef.bg} shrink-0`}>
-                      <IconComp className={`h-4 w-4 ${iconDef.color}`} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-white truncate">
+            recentFailures.map((event) => {
+              const customer = event.customers
+              const badge = getFailureBadge(event.amount, event.created_at)
+              return (
+                <Link
+                  key={event.id}
+                  href={`/dashboard/failures/${event.id}`}
+                  className="px-8 py-5 flex items-center justify-between hover:bg-[#201f1f] transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <CustomerAvatar name={customer?.name} email={customer?.email} />
+                    <div>
+                      <p className="font-bold text-white">
                         {customer?.name || customer?.email || t.unknownCustomer}
                       </p>
-                      <p className="text-xs text-zinc-400 truncate mt-0.5">
-                        {formatCurrency(event.amount, event.currency)} · {event.failure_message || t.paymentFailed}
+                      <p className="text-xs text-zinc-500">
+                        {event.failure_message || t.paymentFailed}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-zinc-400 shrink-0">
-                      <Clock className="w-3 h-3" />
+                  </div>
+
+                  <div className="text-right">
+                    <p className="font-black text-white">
+                      {formatCurrency(event.amount, event.currency)}
+                    </p>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${badge.className}`}>
+                      {badge.label}
+                    </span>
+                  </div>
+
+                  <div className="hidden md:block text-right">
+                    <p className="text-xs font-medium text-zinc-500">Oluşturulma</p>
+                    <p className="text-xs font-bold text-[#9fff88]">
                       {formatRelativeTime(event.created_at, lang)}
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
+                    </p>
+                  </div>
+                </Link>
+              )
+            })
           )}
         </div>
+      </section>
 
-        <div className="space-y-6">
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">{t.quickStats}</h3>
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm text-zinc-400">{t.recoveryRateLabel}</span>
-                  <span className="text-sm font-semibold text-white">{recoveryRate}%</span>
-                </div>
-                <div className="w-full bg-zinc-800 rounded-full h-2">
-                  <div className="bg-blue-500 h-2 rounded-full transition-all duration-700" style={{ width: `${Math.min(recoveryRate, 100)}%` }} />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm text-zinc-400">{t.failureRate}</span>
-                  <span className="text-sm font-semibold text-white">
-                    {totalFailed > 0 ? Math.round((1 - totalRecovered / totalFailed) * 100) : 100}%
-                  </span>
-                </div>
-                <div className="w-full bg-zinc-800 rounded-full h-2">
-                  <div className="bg-orange-500 h-2 rounded-full transition-all duration-700"
-                    style={{ width: `${totalFailed > 0 ? Math.min(Math.round((1 - totalRecovered / totalFailed) * 100), 100) : 100}%` }} />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm text-zinc-400">{t.recovered}</span>
-                  <span className="text-sm font-semibold text-white">{recoveredCount} {t.payments}</span>
-                </div>
-                <div className="w-full bg-zinc-800 rounded-full h-2">
-                  <div className="bg-green-500 h-2 rounded-full transition-all duration-700"
-                    style={{ width: `${Math.min(recoveredCount * 10, 100)}%` }} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">{t.summary}</h3>
-            <div className="space-y-3">
-              {[
-                { label: t.activeFailuresLabel, value: activeFailures, color: 'text-red-400' },
-                { label: t.recoveredLabel, value: recoveredCount, color: 'text-green-400' },
-                { label: t.totalEvents, value: activeFailures + recoveredCount, color: 'text-blue-400' },
-                { label: t.analyticsDays, value: analyticsLength, color: 'text-purple-400' },
-              ].map(({ label, value, color }) => (
-                <div key={label} className="flex items-center justify-between py-2 border-b border-zinc-800 last:border-0">
-                  <span className="text-sm text-zinc-400">{label}</span>
-                  <span className={`text-sm font-bold ${color}`}>{value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* FAB */}
+      <Link
+        href="/dashboard/sequences"
+        className="fixed bottom-8 right-8 w-16 h-16 bg-[#9fff88] rounded-full flex items-center justify-center shadow-2xl shadow-[#9fff88]/40 hover:scale-105 active:scale-95 transition-all group z-50"
+      >
+        <Plus className="w-7 h-7 text-black" />
+        <span className="absolute right-20 bg-[#201f1f] text-white px-4 py-2 rounded-lg text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-zinc-700">
+          Yeni Kurtarma Sekansı
+        </span>
+      </Link>
     </div>
   )
 }
