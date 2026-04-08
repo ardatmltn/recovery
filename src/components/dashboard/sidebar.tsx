@@ -13,6 +13,7 @@ import {
   Settings,
   Zap,
   ChevronsRight,
+  Plug2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useLanguage } from '@/lib/language-context'
@@ -31,6 +32,7 @@ export function Sidebar() {
     { href: '/dashboard/sequences', label: t.sequences, icon: GitBranch },
     { href: '/dashboard/templates', label: t.templates, icon: Mail },
     { href: '/dashboard/analytics', label: t.analytics, icon: BarChart3 },
+    { href: '/dashboard/integrations', label: t.integrations, icon: Plug2 },
     { href: '/dashboard/settings', label: t.settings, icon: Settings },
   ]
 
