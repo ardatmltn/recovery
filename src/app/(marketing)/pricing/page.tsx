@@ -8,10 +8,12 @@ import { RippleButton } from '@/components/ui/multi-type-ripple-buttons'
 import { useLanguage } from '@/lib/language-context'
 import { translations } from '@/components/marketing/translations'
 import { useRouter } from 'next/navigation'
+import { BillingToggle } from '@/components/marketing/billing-toggle'
 
 const PLAN_NAMES = ['Starter', 'Growth', 'Pro']
 const PLAN_KEYS = ['starter', 'growth', 'pro'] as const
-const PLAN_PRICES = ['59', '99', '149']
+const PLAN_PRICES_MONTHLY = ['59', '99', '149']
+const PLAN_PRICES_ANNUAL = ['47', '79', '119']
 
 function ShaderCanvas({ targetX }: { targetX: number }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -131,7 +133,9 @@ export default function PricingPage() {
   const router = useRouter()
 
   const [selectedPlan, setSelectedPlan] = useState(1)
+  const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
   const [checkingOut, setCheckingOut] = useState(false)
+  const PLAN_PRICES = billing === 'annual' ? PLAN_PRICES_ANNUAL : PLAN_PRICES_MONTHLY
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [planCenterX, setPlanCenterX] = useState([0.155, 0.5, 0.845])
 
@@ -189,6 +193,16 @@ export default function PricingPage() {
           </h1>
           <p className="text-zinc-400 text-lg max-w-md mx-auto mb-2">{tx.subtitle}</p>
           <p className="text-zinc-400 text-sm">{tx.sub2}</p>
+
+          <div className="mt-8">
+            <BillingToggle
+              value={billing}
+              onChange={setBilling}
+              monthlyLabel={lang === 'tr' ? 'Aylık' : 'Monthly'}
+              annualLabel={lang === 'tr' ? 'Yıllık' : 'Annual'}
+              savingsLabel={lang === 'tr' ? '%20 indirim' : '20% off'}
+            />
+          </div>
         </div>
 
         {/* Plans */}
@@ -227,8 +241,17 @@ export default function PricingPage() {
                   </div>
 
                   <div className="my-6 flex items-baseline gap-2">
-                    <span className="text-5xl font-extralight text-white font-display">${PLAN_PRICES[i]}</span>
-                    <span className="text-zinc-400 text-sm">/mo</span>
+                    <span className="text-5xl font-extralight text-white font-display transition-all duration-300">
+                      ${PLAN_PRICES[i]}
+                    </span>
+                    <div className="flex flex-col">
+                      <span className="text-zinc-400 text-sm">/mo</span>
+                      {billing === 'annual' && (
+                        <span className="text-xs text-green-500 font-medium">
+                          ${String(Number(PLAN_PRICES[i]) * 12)}/yr
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="w-full mb-5 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />

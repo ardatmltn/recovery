@@ -5,6 +5,7 @@ import { dashboardTranslations } from '@/lib/dashboard-translations'
 import { formatCurrency, formatDateTime, formatRelativeTime } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { RecoveryTimeline } from '@/components/dashboard/recovery-timeline'
 
 type Attempt = {
   id: string
@@ -73,38 +74,7 @@ export function FailureDetailView({ event, attempts }: Props) {
       <Card>
         <CardHeader><CardTitle>{t.recoveryTimeline}</CardTitle></CardHeader>
         <CardContent>
-          {attempts.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t.noAttempts}</p>
-          ) : (
-            <div className="space-y-3">
-              {attempts.map((attempt) => (
-                <div key={attempt.id} className="flex items-start gap-4 p-3 rounded-lg border">
-                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold shrink-0">
-                    {attempt.step_number}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium capitalize">{attempt.type.replace('_', ' ')}</span>
-                      {attempt.message_templates && (
-                        <span className="text-xs text-muted-foreground">— {attempt.message_templates.name}</span>
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      {t.scheduled}: {formatDateTime(attempt.scheduled_at)}
-                    </p>
-                    {attempt.executed_at && (
-                      <p className="text-xs text-muted-foreground">
-                        {t.executed}: {formatDateTime(attempt.executed_at)}
-                      </p>
-                    )}
-                  </div>
-                  <Badge variant={attempt.status === 'succeeded' ? 'default' : attempt.status === 'failed' ? 'destructive' : 'secondary'}>
-                    {attempt.status}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          )}
+          <RecoveryTimeline attempts={attempts} emptyText={t.noAttempts} />
         </CardContent>
       </Card>
     </div>

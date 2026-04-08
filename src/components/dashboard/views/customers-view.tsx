@@ -2,8 +2,8 @@
 
 import { useLanguage } from '@/lib/language-context'
 import { dashboardTranslations } from '@/lib/dashboard-translations'
-import { formatCurrency, formatRelativeTime, getRiskLabel } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
+import { formatCurrency, formatRelativeTime } from '@/lib/utils'
+import { RiskScoreBadge } from '@/components/dashboard/risk-score-badge'
 
 type Customer = {
   id: string
@@ -42,9 +42,7 @@ export function CustomersView({ customers }: { customers: Customer[] }) {
                 <td colSpan={5} className="px-4 py-8 text-center text-zinc-500">{t.noCustomers}</td>
               </tr>
             ) : (
-              customers.map((customer) => {
-                const risk = getRiskLabel(customer.risk_score, lang)
-                return (
+              customers.map((customer) => (
                   <tr key={customer.id} className="hover:bg-zinc-800/40 transition-colors">
                     <td className="px-4 py-3">
                       <a href={`/dashboard/customers/${customer.id}`} className="block">
@@ -53,10 +51,7 @@ export function CustomersView({ customers }: { customers: Customer[] }) {
                       </a>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-white">{customer.risk_score}</span>
-                        <Badge variant={risk.variant === 'warning' ? 'secondary' : risk.variant}>{risk.label}</Badge>
-                      </div>
+                      <RiskScoreBadge score={customer.risk_score} showLabel size="sm" />
                     </td>
                     <td className="px-4 py-3 text-zinc-200">{customer.total_failed_payments}</td>
                     <td className="px-4 py-3 text-zinc-200">{formatCurrency(customer.total_recovered_amount)}</td>
@@ -64,8 +59,7 @@ export function CustomersView({ customers }: { customers: Customer[] }) {
                       {customer.last_payment_failed_at ? formatRelativeTime(customer.last_payment_failed_at, lang) : '—'}
                     </td>
                   </tr>
-                )
-              })
+              ))
             )}
           </tbody>
         </table>
