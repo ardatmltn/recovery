@@ -10,7 +10,7 @@ export default async function FailuresPage() {
 
   const { data: failures } = await supabase
     .from('payment_events')
-    .select('id, amount, currency, failure_code, status, created_at, customers(name, email)')
+    .select('id, amount, currency, failure_code, status, created_at, customers(name, email), recovery_attempts(id)')
     .eq('org_id', userData?.org_id ?? '')
     .order('created_at', { ascending: false })
     .limit(50)
@@ -23,6 +23,7 @@ export default async function FailuresPage() {
     status: e.status,
     created_at: e.created_at,
     customers: e.customers as { name?: string; email?: string } | null,
+    attempt_count: Array.isArray(e.recovery_attempts) ? e.recovery_attempts.length : 0,
   }))
 
   return <FailuresView failures={mapped} />

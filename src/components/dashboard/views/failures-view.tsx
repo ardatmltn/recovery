@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { formatCurrency, formatRelativeTime } from '@/lib/utils'
 import { MoreVertical, Download, Calendar, TrendingUp, AlertTriangle, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 
+const MAX_ATTEMPTS = 5
+
 type Failure = {
   id: string
   amount: number
@@ -13,6 +15,7 @@ type Failure = {
   status: string
   created_at: string
   customers: { name?: string; email?: string } | null
+  attempt_count: number
 }
 
 type FilterStatus = 'all' | 'new' | 'recovered' | 'failed'
@@ -168,6 +171,7 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
                 <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Müşteri</th>
                 <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Miktar</th>
                 <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Hata Nedeni</th>
+                <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Deneme</th>
                 <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Durum</th>
                 <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Zaman</th>
                 <th className="px-8 py-5 text-right" />
@@ -214,6 +218,27 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
                     {/* Failure reason */}
                     <td className="px-6 py-5">
                       <FailureReasonDot status={event.status} code={event.failure_code} />
+                    </td>
+
+                    {/* Attempt count */}
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-medium text-zinc-300">
+                          {event.attempt_count}/{MAX_ATTEMPTS}
+                        </span>
+                        <div className="w-20 h-1 rounded-full bg-zinc-800 overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${
+                              event.status === 'failed' || event.status === 'ignored'
+                                ? 'bg-red-500'
+                                : event.status === 'recovered'
+                                ? 'bg-green-400'
+                                : 'bg-green-400'
+                            }`}
+                            style={{ width: `${Math.min((event.attempt_count / MAX_ATTEMPTS) * 100, 100)}%` }}
+                          />
+                        </div>
+                      </div>
                     </td>
 
                     {/* Status */}
