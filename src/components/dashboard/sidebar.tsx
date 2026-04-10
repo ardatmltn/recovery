@@ -40,10 +40,7 @@ export function Sidebar() {
       {/* Logo */}
       <div className="mb-8">
         <Link href="/">
-          <div className="text-2xl font-black tracking-tighter text-[#9fff88]">RECOVERLY</div>
-          <div className="text-[10px] font-bold tracking-[0.2em] text-zinc-500 uppercase mt-1">
-            Pulse of Precision
-          </div>
+          <div className="text-2xl font-extrabold tracking-tighter text-[#9fff88]">Recoverly</div>
         </Link>
       </div>
 
