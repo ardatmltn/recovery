@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { MarketingNav } from '@/components/marketing/nav'
 import { MarketingFooter } from '@/components/marketing/footer'
 import { ArrowRight, TrendingUp, Zap, Sparkles, ScanLine, Workflow, CheckCircle, BarChart3 } from 'lucide-react'
+import { useLanguage } from '@/lib/language-context'
+import { translations } from '@/components/marketing/translations'
 
 function AnimatedBackground() {
   const dataLines = [
@@ -41,8 +43,6 @@ function AnimatedBackground() {
           className="absolute w-px h-24"
           style={{
             left: line.left,
-            animationDuration: line.duration,
-            animationDelay: line.delay,
             animation: `data-flow ${line.duration} linear ${line.delay} infinite`,
             background: 'linear-gradient(to bottom, transparent, #00FF00, transparent)',
             opacity: 0,
@@ -53,7 +53,70 @@ function AnimatedBackground() {
   )
 }
 
+const pageContent = {
+  en: {
+    badge: 'Pulse of Precision Enabled',
+    heroLine1: 'Get back the',
+    heroLine2: 'Revenue',
+    heroLine3: 'You Already Earned',
+    cta2: 'Watch Demo',
+    stats: [
+      { value: '25%+', label: 'Average Recovery Rate' },
+      { value: 'Seconds', label: 'Lightning-Fast Setup' },
+      { value: 'AI Powered', label: 'Industry-Leading Tech' },
+    ],
+    howTitle: 'How Does It Work?',
+    howDesc: 'Our system runs silently in the background, analyzing each failed transaction against billions of data points.',
+    howSteps: [
+      { num: '01', title: 'Detect' },
+      { num: '02', title: 'Recover' },
+      { num: '03', title: 'Success' },
+    ],
+    integrationsLabel: 'Global Integration Support',
+    ctaTitle: 'Stop losing revenue.',
+    ctaDesc: 'Integrate in minutes, start seeing results immediately. No credit card required.',
+    emailPlaceholder: 'Your email address',
+    ctaBtn: 'Get Started Now',
+    liveStream: 'Live Recovery Stream',
+    successRate: 'Success Rate',
+    savedRevenue: 'Saved Revenue',
+  },
+  tr: {
+    badge: 'Pulse of Precision Aktif',
+    heroLine1: 'Zaten Kazandığınız',
+    heroLine2: 'Geliri',
+    heroLine3: 'Geri Alın',
+    cta2: 'Demoyu Gör',
+    stats: [
+      { value: '%25+', label: 'Ortalama Geri Kazanım Oranı' },
+      { value: 'Saniyeler', label: 'İçinde Hızlı Kurulum' },
+      { value: 'AI Destekli', label: 'Sektör Lideri Teknoloji' },
+    ],
+    howTitle: 'Nasıl Çalışır?',
+    howDesc: 'Sistemimiz sessizce arka planda çalışır, her bir başarısız işlemi milyarlarca veri noktasıyla analiz eder.',
+    howSteps: [
+      { num: '01', title: 'Detect' },
+      { num: '02', title: 'Recover' },
+      { num: '03', title: 'Success' },
+    ],
+    integrationsLabel: 'Global Entegrasyon Desteği',
+    ctaTitle: 'Gelir kaybına son verin.',
+    ctaDesc: 'Dakikalar içinde entegre olun, sonuçları hemen görmeye başlayın. Kredi kartı gerekmez.',
+    emailPlaceholder: 'E-posta adresiniz',
+    ctaBtn: 'Hemen Başlayın',
+    liveStream: 'Live Recovery Stream',
+    successRate: 'Success Rate',
+    savedRevenue: 'Saved Revenue',
+  },
+}
+
 export default function HomePage() {
+  const { lang } = useLanguage()
+  const t = translations[lang]
+  const p = pageContent[lang]
+
+  const howStepDescs = t.howItWorks.steps.map((s) => s.desc)
+
   return (
     <div className="bg-[#0e0e0e] text-white min-h-screen">
       <style>{`
@@ -93,20 +156,19 @@ export default function HomePage() {
               <div className="inline-flex items-center gap-2 bg-[#201f1f] px-4 py-1.5 rounded-full w-fit border border-[#9fff88]/10">
                 <span className="w-2 h-2 rounded-full bg-[#9fff88] animate-pulse" />
                 <span className="text-[0.6875rem] uppercase tracking-widest font-bold text-[#adaaaa]">
-                  Pulse of Precision Enabled
+                  {p.badge}
                 </span>
               </div>
 
               <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.1] tracking-tighter text-white">
-                Zaten Kazandığınız <br />
+                {p.heroLine1} <br />
                 <span className="text-[#9fff88]" style={{ textShadow: '0 0 15px rgba(159,255,136,0.4)' }}>
-                  Geliri Geri Alın
+                  {p.heroLine2} {p.heroLine3}
                 </span>
               </h1>
 
               <p className="text-xl text-[#adaaaa] max-w-lg leading-relaxed">
-                Recoverly, AI destekli akıllı denemeler ve kişiselleştirilmiş kurtarma e-postaları ile
-                başarısız ödemelerinizi otomatik olarak gelire dönüştürür.
+                {t.hero.desc}
               </p>
 
               <div className="flex flex-wrap gap-4 mt-4">
@@ -114,14 +176,14 @@ export default function HomePage() {
                   href="/register"
                   className="bg-[#9fff88] text-black font-bold px-8 py-4 rounded-xl flex items-center gap-2 hover:bg-[#8aee72] transition-all shadow-[0_0_20px_rgba(159,255,136,0.2)]"
                 >
-                  Ücretsiz Başla
+                  {t.hero.cta1}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
                   href="/pricing"
                   className="bg-[#262626] text-white font-bold px-8 py-4 rounded-xl border border-[#494847]/20 hover:bg-[#2c2c2c] transition-all"
                 >
-                  Demoyu Gör
+                  {p.cta2}
                 </Link>
               </div>
             </div>
@@ -135,7 +197,7 @@ export default function HomePage() {
                 <div className="flex justify-between items-center mb-10">
                   <div>
                     <p className="text-[#adaaaa] text-xs uppercase tracking-widest font-bold mb-1">
-                      Live Recovery Stream
+                      {p.liveStream}
                     </p>
                     <p className="text-2xl font-bold">
                       $42,904.00 <span className="text-[#9fff88] text-sm">+12%</span>
@@ -164,11 +226,11 @@ export default function HomePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-[#131313] p-4 rounded-xl">
-                      <p className="text-xs text-[#adaaaa] mb-1">Success Rate</p>
+                      <p className="text-xs text-[#adaaaa] mb-1">{p.successRate}</p>
                       <p className="text-lg font-bold text-[#9fff88]">94.2%</p>
                     </div>
                     <div className="bg-[#131313] p-4 rounded-xl">
-                      <p className="text-xs text-[#adaaaa] mb-1">Saved Revenue</p>
+                      <p className="text-xs text-[#adaaaa] mb-1">{p.savedRevenue}</p>
                       <p className="text-lg font-bold text-white">$12.4k</p>
                     </div>
                   </div>
@@ -185,16 +247,16 @@ export default function HomePage() {
           <div className="max-w-7xl mx-auto px-8">
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { icon: TrendingUp, value: '%25+', label: 'Ortalama Geri Kazanım Oranı', border: 'border-[#9fff88]' },
-                { icon: Zap, value: 'Saniyeler', label: 'İçinde Hızlı Kurulum', border: 'border-[#9fff88]/40' },
-                { icon: Sparkles, value: 'AI Destekli', label: 'Sektör Lideri Teknoloji', border: 'border-[#9fff88]/20' },
-              ].map(({ icon: Icon, value, label, border }) => (
-                <div key={value} className={`bg-[#201f1f] p-10 rounded-2xl border-l-2 ${border}`}>
+                { icon: TrendingUp, border: 'border-[#9fff88]' },
+                { icon: Zap, border: 'border-[#9fff88]/40' },
+                { icon: Sparkles, border: 'border-[#9fff88]/20' },
+              ].map(({ icon: Icon, border }, i) => (
+                <div key={i} className={`bg-[#201f1f] p-10 rounded-2xl border-l-2 ${border}`}>
                   <div className="mb-6 bg-[#9fff88]/10 w-12 h-12 rounded-lg flex items-center justify-center">
                     <Icon className="w-5 h-5 text-[#9fff88]" />
                   </div>
-                  <h3 className="text-4xl font-extrabold mb-2 text-white">{value}</h3>
-                  <p className="text-[#adaaaa] font-medium">{label}</p>
+                  <h3 className="text-4xl font-extrabold mb-2 text-white">{p.stats[i].value}</h3>
+                  <p className="text-[#adaaaa] font-medium">{p.stats[i].label}</p>
                 </div>
               ))}
             </div>
@@ -205,41 +267,20 @@ export default function HomePage() {
         <section className="py-32 relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-8 relative z-10">
             <div className="text-center mb-20">
-              <h2 className="text-3xl md:text-5xl font-extrabold mb-6">Nasıl Çalışır?</h2>
-              <p className="text-[#adaaaa] max-w-2xl mx-auto">
-                Sistemimiz sessizce arka planda çalışır, her bir başarısız işlemi milyarlarca veri noktasıyla analiz eder.
-              </p>
+              <h2 className="text-3xl md:text-5xl font-extrabold mb-6">{p.howTitle}</h2>
+              <p className="text-[#adaaaa] max-w-2xl mx-auto">{p.howDesc}</p>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-12">
-              {[
-                {
-                  icon: ScanLine,
-                  num: '01',
-                  title: 'Detect',
-                  desc: 'Başarısız ödeme anında tespit edilir ve sistemimiz hata kodunu analiz ederek en iyi kurtarma yolunu belirler.',
-                },
-                {
-                  icon: Workflow,
-                  num: '02',
-                  title: 'Recover',
-                  desc: 'AI odaklı denemeler ve kişiselleştirilmiş e-postalar devreye girer. Müşteri deneyimini bozmadan süreci yönetir.',
-                },
-                {
-                  icon: CheckCircle,
-                  num: '03',
-                  title: 'Success',
-                  desc: 'Gelir kurtarıldı. Panelinizde gerçek zamanlı başarı istatistiklerini ve kurtarılan tutarı görün.',
-                },
-              ].map(({ icon: Icon, num, title, desc }) => (
-                <div key={num} className="relative">
+              {[ScanLine, Workflow, CheckCircle].map((Icon, i) => (
+                <div key={i} className="relative">
                   <div className="text-[#9fff88] font-extrabold text-7xl opacity-10 absolute -top-10 -left-4 select-none">
-                    {num}
+                    {p.howSteps[i].num}
                   </div>
                   <div className="bg-[#201f1f] p-8 rounded-2xl h-full border border-white/5">
                     <Icon className="w-8 h-8 text-[#9fff88] mb-6" />
-                    <h4 className="text-xl font-bold mb-4">{title}</h4>
-                    <p className="text-[#adaaaa] leading-relaxed">{desc}</p>
+                    <h4 className="text-xl font-bold mb-4">{p.howSteps[i].title}</h4>
+                    <p className="text-[#adaaaa] leading-relaxed">{howStepDescs[i]}</p>
                   </div>
                 </div>
               ))}
@@ -251,7 +292,7 @@ export default function HomePage() {
         <section className="py-24 border-t border-[#494847]/10">
           <div className="max-w-7xl mx-auto px-8 text-center">
             <p className="text-xs uppercase tracking-[0.3em] font-bold text-[#adaaaa] mb-12">
-              Global Entegrasyon Desteği
+              {p.integrationsLabel}
             </p>
             <div className="flex flex-wrap justify-center items-center gap-16 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
               <span className="text-2xl font-bold tracking-tighter text-white">Stripe</span>
@@ -269,23 +310,19 @@ export default function HomePage() {
             style={{ background: 'linear-gradient(135deg, rgba(159,255,136,0.2), transparent)' }}
           >
             <div className="bg-[#0e0e0e] rounded-[1.9rem] p-12 md:p-20 text-center">
-              <h2 className="text-4xl md:text-6xl font-extrabold mb-8">
-                Gelir kaybına son verin.
-              </h2>
-              <p className="text-xl text-[#adaaaa] mb-12 max-w-2xl mx-auto">
-                Dakikalar içinde entegre olun, sonuçları hemen görmeye başlayın. Kredi kartı gerekmez.
-              </p>
+              <h2 className="text-4xl md:text-6xl font-extrabold mb-8">{p.ctaTitle}</h2>
+              <p className="text-xl text-[#adaaaa] mb-12 max-w-2xl mx-auto">{p.ctaDesc}</p>
               <div className="flex flex-col md:flex-row gap-4 justify-center">
                 <input
                   className="bg-[#201f1f] border-none rounded-xl px-6 py-4 text-white w-full md:w-80 focus:outline-none focus:ring-2 focus:ring-[#9fff88]/50"
-                  placeholder="E-posta adresiniz"
+                  placeholder={p.emailPlaceholder}
                   type="email"
                 />
                 <Link
                   href="/register"
                   className="bg-[#9fff88] text-black font-bold px-10 py-4 rounded-xl hover:bg-[#8aee72] transition-all text-center"
                 >
-                  Hemen Başlayın
+                  {p.ctaBtn}
                 </Link>
               </div>
             </div>
