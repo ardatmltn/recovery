@@ -1,48 +1,34 @@
 'use client'
 
 import Link from 'next/link'
-import { Zap } from 'lucide-react'
-import { LanguageSwitcher } from './language-switcher'
-import { useLanguage } from '@/lib/language-context'
-import { translations } from './translations'
 
-interface MarketingNavProps {
-  showUpgradeButton?: React.ReactNode
-}
-
-export function MarketingNav({ showUpgradeButton }: MarketingNavProps) {
-  const { lang } = useLanguage()
-  const tx = translations[lang].nav
-
+export function MarketingNav() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-800/60 bg-[#09090B]/80 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center shadow-[0_0_16px_rgba(34,197,94,0.3)]">
-            <Zap className="w-4 h-4 text-black" />
-          </div>
-          <span className="font-display font-bold text-white text-lg tracking-tight">Recoverly</span>
-        </Link>
+    <nav className="fixed top-0 w-full z-50 bg-neutral-950/80 backdrop-blur-xl shadow-[0_0_40px_rgba(159,255,136,0.04)]">
+      <div className="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
+        <div className="text-2xl font-extrabold tracking-tighter text-[#9fff88]">Recoverly</div>
 
-        <div className="flex items-center gap-2">
-          <LanguageSwitcher />
-          {showUpgradeButton}
-          <Link href="/pricing" className="px-4 py-2 text-zinc-400 hover:text-white text-sm font-medium transition-colors">
-            {tx.pricing}
+        <div className="hidden md:flex gap-8 items-center">
+          <a href="#" className="text-[#9fff88] font-bold border-b-2 border-[#9fff88] pb-1 text-sm tracking-tight transition-colors duration-300">
+            Solutions
+          </a>
+          <a href="#" className="text-[#adaaaa] font-medium text-sm tracking-tight hover:text-[#9fff88] transition-colors duration-300">
+            Security
+          </a>
+          <Link href="/pricing" className="text-[#adaaaa] font-medium text-sm tracking-tight hover:text-[#9fff88] transition-colors duration-300">
+            Pricing
           </Link>
-          <Link
-            href="/login"
-            className="px-4 py-2 border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white text-sm font-medium rounded-full transition-all bg-zinc-900/50 hover:bg-zinc-800/60"
-          >
-            {tx.signIn}
-          </Link>
-          <Link
-            href="/register"
-            className="px-4 py-2 bg-green-500 hover:bg-green-400 text-black text-sm font-semibold rounded-full transition-all shadow-[0_0_16px_rgba(34,197,94,0.2)] hover:shadow-[0_0_24px_rgba(34,197,94,0.35)] hover:-translate-y-px"
-          >
-            {tx.getStarted}
-          </Link>
+          <a href="#" className="text-[#adaaaa] font-medium text-sm tracking-tight hover:text-[#9fff88] transition-colors duration-300">
+            Company
+          </a>
         </div>
+
+        <Link
+          href="/register"
+          className="bg-[#9fff88] text-black font-bold text-sm px-6 py-2.5 rounded-lg active:scale-95 transition-transform hover:bg-[#8aee72]"
+        >
+          Launch Terminal
+        </Link>
       </div>
     </nav>
   )
