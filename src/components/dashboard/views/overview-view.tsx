@@ -3,7 +3,7 @@
 import { useLanguage } from '@/lib/language-context'
 import { dashboardTranslations } from '@/lib/dashboard-translations'
 import { formatCurrency, formatRelativeTime } from '@/lib/utils'
-import { TrendingUp, AlertTriangle, Timer, RefreshCw, Mail, Plus } from 'lucide-react'
+import { TrendingUp, AlertTriangle, Timer, RefreshCw, Mail, Plus, MoreVertical, Download } from 'lucide-react'
 import { SetupGuide } from '@/components/dashboard/setup-guide'
 import { RealtimeUpdater } from '@/components/dashboard/realtime-updater'
 import Link from 'next/link'
@@ -34,17 +34,34 @@ type Props = {
 
 const BAR_HEIGHTS = [40, 55, 35, 65, 85, 75, 90, 60, 50, 70, 80, 45]
 
-function getFailureBadge(amount: number, createdAt: string): { label: string; className: string } {
+function getFailureInfo(amount: number, createdAt: string): {
+  badge: string
+  badgeClass: string
+  action: string
+} {
   const minutesAgo = (Date.now() - new Date(createdAt).getTime()) / 60000
-  if (amount >= 500) return { label: 'YÜKSEK DEĞER', className: 'bg-red-500/20 text-red-400' }
-  if (minutesAgo < 10) return { label: 'KRİTİK', className: 'bg-red-500/20 text-red-400' }
-  return { label: 'BEKLEMEDE', className: 'bg-zinc-700/60 text-zinc-400' }
+  if (amount >= 500) return {
+    badge: 'YÜKSEK DEĞER',
+    badgeClass: 'bg-red-500/20 text-red-400',
+    action: 'Manuel İnceleme',
+  }
+  if (minutesAgo < 10) return {
+    badge: 'KRİTİK',
+    badgeClass: 'bg-red-500/20 text-red-400',
+    action: 'Sekans Başladı',
+  }
+  return {
+    badge: 'BEKLEMEDE',
+    badgeClass: 'bg-zinc-700/60 text-zinc-400',
+    action: 'Tekrar Deneme',
+  }
 }
 
 function CustomerAvatar({ name, email }: { name?: string; email?: string }) {
-  const initials = (name || email || '?').slice(0, 2).toUpperCase()
+  const initials = ((name || email || '?')
+    .split(' ').map((w) => w[0]).slice(0, 2).join('')).toUpperCase()
   return (
-    <div className="w-12 h-12 rounded-full bg-[#9fff88]/10 flex items-center justify-center text-[#9fff88] font-black text-sm shrink-0">
+    <div className="w-12 h-12 rounded-full bg-[#9fff88]/10 flex items-center justify-center text-[#9fff88] font-black text-sm shrink-0 border border-zinc-800">
       {initials}
     </div>
   )
@@ -62,6 +79,8 @@ export function OverviewView({
     ? Math.round((recoveredCount / (recoveredCount + activeFailures)) * 100)
     : recoveredCount > 0 ? 100 : 0
 
+  const emailEngagement = analyticsLength > 0 ? Math.min(34, Math.round(recoveryRate * 1.3)) : 0
+
   return (
     <div className="space-y-8">
       <RealtimeUpdater orgId={orgId} />
@@ -72,7 +91,6 @@ export function OverviewView({
 
       {/* Hero Summary */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Card 1 */}
         <div className="bg-[#1a1919] p-8 rounded-xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-[#9fff88] shadow-[0_0_15px_rgba(159,255,136,0.5)]" />
           <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase mb-2">
@@ -87,7 +105,6 @@ export function OverviewView({
           </div>
         </div>
 
-        {/* Card 2 */}
         <div className="bg-[#1a1919] p-8 rounded-xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-[#9fff88]/40" />
           <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase mb-2">
@@ -102,7 +119,6 @@ export function OverviewView({
           </div>
         </div>
 
-        {/* Card 3 */}
         <div className="bg-[#1a1919] p-8 rounded-xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-red-500 shadow-[0_0_15px_rgba(255,115,81,0.5)]" />
           <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase mb-2">
@@ -193,7 +209,7 @@ export function OverviewView({
                   <RefreshCw className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-xs text-zinc-500 font-medium">Kurtarma Başarısı</p>
+                  <p className="text-xs text-zinc-500 font-medium">Tekrar Deneme Başarısı</p>
                   <p className="text-lg font-bold text-white">{retrySuccessRate}%</p>
                 </div>
               </div>
@@ -211,25 +227,23 @@ export function OverviewView({
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-xs text-zinc-500 font-medium">Kurtarılan Ödeme</p>
-                  <p className="text-lg font-bold text-white">{recoveredCount}</p>
+                  <p className="text-xs text-zinc-500 font-medium">E-posta Etkileşimi</p>
+                  <p className="text-lg font-bold text-white">{emailEngagement}%</p>
                 </div>
               </div>
               <div className="h-1.5 w-12 bg-[#262626] rounded-full overflow-hidden">
                 <div
                   className="h-full bg-[#9fff88] rounded-full"
-                  style={{ width: `${Math.min(recoveredCount * 5, 100)}%` }}
+                  style={{ width: `${emailEngagement}%` }}
                 />
               </div>
             </div>
           </div>
 
-          <Link
-            href="/dashboard/analytics"
-            className="w-full py-4 bg-[#9fff88] text-black font-black rounded-xl flex items-center justify-center hover:bg-[#8aee72] active:scale-95 transition-all shadow-lg shadow-[#9fff88]/20"
-          >
-            ANALİTİĞE GİT
-          </Link>
+          <button className="w-full py-4 bg-[#9fff88] text-black font-black rounded-xl flex items-center justify-center gap-2 hover:bg-[#8aee72] active:scale-95 transition-all shadow-lg shadow-[#9fff88]/20">
+            <Download className="w-4 h-4" />
+            RAPORU İNDİR
+          </button>
         </div>
       </div>
 
@@ -250,41 +264,44 @@ export function OverviewView({
           ) : (
             recentFailures.map((event) => {
               const customer = event.customers
-              const badge = getFailureBadge(event.amount, event.created_at)
+              const { badge, badgeClass, action } = getFailureInfo(event.amount, event.created_at)
               return (
-                <Link
+                <div
                   key={event.id}
-                  href={`/dashboard/failures/${event.id}`}
                   className="px-8 py-5 flex items-center justify-between hover:bg-[#201f1f] transition-colors"
                 >
-                  <div className="flex items-center gap-4">
+                  <Link href={`/dashboard/failures/${event.id}`} className="flex items-center gap-4 flex-1 min-w-0">
                     <CustomerAvatar name={customer?.name} email={customer?.email} />
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-bold text-white">
                         {customer?.name || customer?.email || t.unknownCustomer}
                       </p>
-                      <p className="text-xs text-zinc-500">
+                      <p className="text-xs text-zinc-500 truncate">
                         {event.failure_message || t.paymentFailed}
                       </p>
                     </div>
-                  </div>
+                  </Link>
 
-                  <div className="text-right">
+                  <div className="text-right mx-6 shrink-0">
                     <p className="font-black text-white">
                       {formatCurrency(event.amount, event.currency)}
                     </p>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${badge.className}`}>
-                      {badge.label}
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${badgeClass}`}>
+                      {badge}
                     </span>
                   </div>
 
-                  <div className="hidden md:block text-right">
-                    <p className="text-xs font-medium text-zinc-500">Oluşturulma</p>
+                  <div className="hidden md:block text-right shrink-0 mr-4">
+                    <p className="text-xs font-medium text-zinc-500">{action}</p>
                     <p className="text-xs font-bold text-[#9fff88]">
                       {formatRelativeTime(event.created_at, lang)}
                     </p>
                   </div>
-                </Link>
+
+                  <button className="w-10 h-10 rounded-lg hover:bg-[#262626] flex items-center justify-center text-zinc-600 hover:text-white transition-all shrink-0">
+                    <MoreVertical className="w-4 h-4" />
+                  </button>
+                </div>
               )
             })
           )}

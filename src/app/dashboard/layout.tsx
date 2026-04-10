@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Sidebar />
           <div className="flex flex-col flex-1 overflow-hidden ml-64">
             <Header />
-            <main className="flex-1 overflow-y-auto p-6">
+            <main className="flex-1 overflow-y-auto pt-24 px-8 pb-12">
               {children}
             </main>
           </div>

@@ -6,11 +6,22 @@ export async function Header() {
   const { data: { user } } = await supabase.auth.getUser()
 
   const email = user?.email ?? ''
-  const initials = email.slice(0, 2).toUpperCase() || 'U'
+
+  const { data: userData } = await supabase
+    .from('users')
+    .select('full_name')
+    .eq('id', user?.id ?? '')
+    .single()
+
+  const fullName = userData?.full_name ?? email.split('@')[0] ?? 'Kullanıcı'
+  const initials = fullName
+    .split(' ')
+    .map((w: string) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase() || 'U'
 
   return (
-    <header className="h-14 border-b border-zinc-800 bg-[#09090B] flex items-center justify-end px-6">
-      <HeaderDropdown email={email} initials={initials} />
-    </header>
+    <HeaderDropdown email={email} initials={initials} fullName={fullName} />
   )
 }
