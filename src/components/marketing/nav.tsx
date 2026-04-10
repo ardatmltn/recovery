@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { LanguageSwitcher } from './language-switcher'
 
 export function MarketingNav() {
   return (
@@ -23,12 +24,15 @@ export function MarketingNav() {
           </a>
         </div>
 
-        <Link
-          href="/register"
-          className="bg-[#9fff88] text-black font-bold text-sm px-6 py-2.5 rounded-lg active:scale-95 transition-transform hover:bg-[#8aee72]"
-        >
-          Launch Terminal
-        </Link>
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher />
+          <Link
+            href="/register"
+            className="bg-[#9fff88] text-black font-bold text-sm px-6 py-2.5 rounded-lg active:scale-95 transition-transform hover:bg-[#8aee72]"
+          >
+            Launch Terminal
+          </Link>
+        </div>
       </div>
     </nav>
   )
