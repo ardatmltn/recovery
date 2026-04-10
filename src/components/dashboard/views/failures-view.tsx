@@ -36,14 +36,14 @@ function StatusBadge({ status }: { status: string }) {
   switch (status) {
     case 'recovered':
       return (
-        <span className="bg-green-500/10 px-3 py-1 rounded-full text-[10px] font-black text-green-400 uppercase tracking-wider border border-green-500/30">
+        <span className="bg-[#9fff88]/10 px-3 py-1 rounded-full text-[10px] font-black text-[#9fff88] uppercase tracking-wider border border-[#9fff88]/30">
           Kurtarıldı
         </span>
       )
     case 'failed':
     case 'ignored':
       return (
-        <span className="bg-red-500/10 px-3 py-1 rounded-full text-[10px] font-black text-red-400 uppercase tracking-wider border border-red-500/30">
+        <span className="bg-[#ff7351]/10 px-3 py-1 rounded-full text-[10px] font-black text-[#ff7351] uppercase tracking-wider border border-[#ff7351]/30">
           Başarısız
         </span>
       )
@@ -55,7 +55,7 @@ function StatusBadge({ status }: { status: string }) {
       )
     default:
       return (
-        <span className="bg-zinc-800 px-3 py-1 rounded-full text-[10px] font-black text-green-400 uppercase tracking-wider border border-green-500/10">
+        <span className="bg-[#262626] px-3 py-1 rounded-full text-[10px] font-black text-[#9fff88] uppercase tracking-wider border border-[#9fff88]/10">
           Beklemede
         </span>
       )
@@ -65,17 +65,17 @@ function StatusBadge({ status }: { status: string }) {
 function FailureReasonDot({ status, code }: { status: string; code: string | null }) {
   const color =
     status === 'recovered'
-      ? 'bg-green-400 shadow-[0_0_8px_#4ade80]'
+      ? 'bg-[#9fff88] shadow-[0_0_8px_#9fff88]'
       : status === 'failed' || status === 'ignored'
-      ? 'bg-red-400'
-      : 'bg-zinc-500'
+      ? 'bg-[#ff7351]'
+      : 'bg-[#adaaaa]'
 
   const label = code ?? 'Bilinmeyen Hata'
 
   return (
     <div className="flex items-center gap-2">
       <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${color}`} />
-      <span className="text-xs text-zinc-200 truncate max-w-[160px]">{label}</span>
+      <span className="text-xs text-white truncate max-w-[160px]">{label}</span>
     </div>
   )
 }
@@ -124,7 +124,7 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
             Başarısız Ödemeler
           </h1>
           <p className="text-zinc-500 text-sm flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-[#9fff88] animate-pulse" />
             {activeCount > 0
               ? `Şu anda ${activeCount} aktif kurtarma sekansı çalışıyor.`
               : 'Şu an aktif kurtarma sekansı yok.'}
@@ -133,15 +133,14 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
 
         {/* Controls */}
         <div className="flex items-center gap-3">
-          {/* Filter tabs */}
-          <div className="flex bg-zinc-900 rounded-xl p-1 border border-zinc-800">
+          <div className="flex bg-[#131313] rounded-xl p-1 border border-zinc-800">
             {filterTabs.map(({ key, label }) => (
               <button
                 key={key}
                 onClick={() => handleFilterChange(key)}
                 className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${
                   filter === key
-                    ? 'bg-zinc-800 text-green-400'
+                    ? 'bg-[#201f1f] text-[#9fff88]'
                     : 'text-zinc-500 hover:text-zinc-200'
                 }`}
               >
@@ -150,12 +149,12 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
             ))}
           </div>
 
-          <button className="flex items-center gap-2 bg-zinc-800 px-4 py-2.5 rounded-xl text-xs font-bold text-zinc-300 hover:bg-zinc-700 transition-all border border-zinc-700">
+          <button className="flex items-center gap-2 bg-[#201f1f] px-4 py-2.5 rounded-xl text-xs font-bold text-zinc-300 hover:bg-[#262626] transition-all border border-zinc-800">
             <Calendar className="w-3.5 h-3.5" />
             Son 30 Gün
           </button>
 
-          <button className="flex items-center gap-2 bg-green-500 hover:bg-green-400 text-black px-5 py-2.5 rounded-xl text-xs font-black transition-all shadow-lg shadow-green-500/10">
+          <button className="flex items-center gap-2 bg-[#9fff88] hover:bg-[#8aee72] text-black px-5 py-2.5 rounded-xl text-xs font-black transition-all shadow-lg shadow-[#9fff88]/10">
             <Download className="w-3.5 h-3.5" />
             DIŞA AKTAR
           </button>
@@ -163,21 +162,20 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
       </div>
 
       {/* Table */}
-      <div className="bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
+      <div className="bg-[#131313] rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-zinc-800/50">
+              <tr className="bg-[#1a1919]/50">
                 <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Müşteri</th>
                 <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Miktar</th>
                 <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Hata Nedeni</th>
                 <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Deneme</th>
                 <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Durum</th>
-                <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Zaman</th>
                 <th className="px-8 py-5 text-right" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800/60">
+            <tbody className="divide-y divide-[#494847]/10">
               {paginated.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-8 py-16 text-center text-zinc-500 text-sm">
@@ -188,12 +186,12 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
                 paginated.map((event) => (
                   <tr
                     key={event.id}
-                    className="hover:bg-zinc-800/30 transition-colors group"
+                    className="hover:bg-[#201f1f]/40 transition-colors group"
                   >
                     {/* Customer */}
-                    <td className="px-8 py-5">
+                    <td className="px-8 py-6">
                       <Link href={`/dashboard/failures/${event.id}`} className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-green-400 text-sm font-bold border border-zinc-700 shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-[#262626] flex items-center justify-center text-[#9fff88] text-sm font-bold border border-[#494847]/20 shrink-0">
                           {getInitials(event.customers?.name)}
                         </div>
                         <div>
@@ -208,7 +206,7 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
                     </td>
 
                     {/* Amount */}
-                    <td className="px-6 py-5">
+                    <td className="px-6 py-6">
                       <p className="text-sm font-bold text-white">
                         {formatCurrency(event.amount, event.currency)}
                       </p>
@@ -216,24 +214,22 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
                     </td>
 
                     {/* Failure reason */}
-                    <td className="px-6 py-5">
+                    <td className="px-6 py-6">
                       <FailureReasonDot status={event.status} code={event.failure_code} />
                     </td>
 
                     {/* Attempt count */}
-                    <td className="px-6 py-5">
+                    <td className="px-6 py-6">
                       <div className="flex items-center gap-3">
-                        <span className="text-xs font-medium text-zinc-300">
+                        <span className="text-xs font-medium text-white">
                           {event.attempt_count}/{MAX_ATTEMPTS}
                         </span>
-                        <div className="w-20 h-1 rounded-full bg-zinc-800 overflow-hidden">
+                        <div className="w-20 h-1 rounded-full bg-[#262626] overflow-hidden">
                           <div
                             className={`h-full rounded-full ${
                               event.status === 'failed' || event.status === 'ignored'
-                                ? 'bg-red-500'
-                                : event.status === 'recovered'
-                                ? 'bg-green-400'
-                                : 'bg-green-400'
+                                ? 'bg-[#ff7351]'
+                                : 'bg-[#9fff88]'
                             }`}
                             style={{ width: `${Math.min((event.attempt_count / MAX_ATTEMPTS) * 100, 100)}%` }}
                           />
@@ -242,18 +238,13 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
                     </td>
 
                     {/* Status */}
-                    <td className="px-6 py-5">
+                    <td className="px-6 py-6">
                       <StatusBadge status={event.status} />
                     </td>
 
-                    {/* Time */}
-                    <td className="px-6 py-5 text-xs text-zinc-400">
-                      {formatRelativeTime(event.created_at, 'tr')}
-                    </td>
-
                     {/* Actions */}
-                    <td className="px-8 py-5 text-right">
-                      <button className="p-2 rounded-lg text-zinc-600 hover:text-white hover:bg-zinc-700 transition-all">
+                    <td className="px-8 py-6 text-right">
+                      <button className="p-2 rounded-lg text-zinc-600 hover:text-white hover:bg-[#262626] transition-all">
                         <MoreVertical className="w-4 h-4" />
                       </button>
                     </td>
@@ -265,7 +256,7 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
         </div>
 
         {/* Pagination footer */}
-        <div className="px-8 py-4 bg-zinc-900/80 border-t border-zinc-800 flex items-center justify-between">
+        <div className="px-8 py-4 bg-[#1a1919] border-t border-zinc-800 flex items-center justify-between">
           <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
             Görüntülenen: {Math.min(paginated.length + (page - 1) * PAGE_SIZE, filtered.length)} / {filtered.length} İşlem
           </p>
@@ -273,7 +264,7 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="p-2 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white disabled:opacity-30 transition-all"
+              className="p-2 rounded-lg bg-[#201f1f] text-zinc-400 hover:text-white disabled:opacity-30 transition-all"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -286,8 +277,8 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
                     onClick={() => setPage(pageNum)}
                     className={`w-8 h-8 rounded-lg text-xs font-bold transition-colors ${
                       page === pageNum
-                        ? 'bg-green-500 text-black'
-                        : 'text-zinc-500 hover:bg-zinc-800 hover:text-white'
+                        ? 'bg-[#9fff88] text-black'
+                        : 'text-zinc-500 hover:bg-[#201f1f] hover:text-white'
                     }`}
                   >
                     {pageNum}
@@ -298,7 +289,7 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="p-2 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white disabled:opacity-30 transition-all"
+              className="p-2 rounded-lg bg-[#201f1f] text-zinc-400 hover:text-white disabled:opacity-30 transition-all"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -309,9 +300,9 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
       {/* Insight cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Recovery performance card */}
-        <div className="md:col-span-2 bg-zinc-900 rounded-2xl p-8 border border-zinc-800 relative overflow-hidden">
+        <div className="md:col-span-2 bg-[#201f1f] rounded-2xl p-8 relative overflow-hidden">
           <div className="relative z-10">
-            <p className="text-[10px] font-black text-green-400 uppercase tracking-[0.2em] mb-4">
+            <p className="text-[10px] font-black text-[#9fff88] uppercase tracking-[0.2em] mb-4">
               Kurtarma Performansı
             </p>
             <h3 className="text-2xl font-bold text-white mb-2">
@@ -325,15 +316,14 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
                 : 'Kurtarma sekanslarınızı yapılandırarak gelir kaybını önleyin.'}
             </p>
           </div>
-          {/* Decorative */}
-          <div className="absolute bottom-0 right-0 w-48 h-48 bg-green-500/5 blur-3xl rounded-full translate-x-1/2 translate-y-1/2 pointer-events-none" />
-          <TrendingUp className="absolute top-1/2 right-8 -translate-y-1/2 w-28 h-28 text-green-500/5 pointer-events-none" />
+          <div className="absolute bottom-0 right-0 w-48 h-48 bg-[#9fff88]/5 blur-3xl rounded-full translate-x-1/2 translate-y-1/2 pointer-events-none" />
+          <TrendingUp className="absolute top-1/2 right-8 -translate-y-1/2 w-28 h-28 text-[#9fff88]/5 pointer-events-none" />
         </div>
 
         {/* Critical warning card */}
-        <div className="bg-zinc-900 rounded-2xl p-8 border border-zinc-800 border-l-2 border-l-red-500/50 flex flex-col justify-between">
+        <div className="bg-[#131313] rounded-2xl p-8 border border-zinc-800 border-l-2 border-l-[#ff7351]/50 flex flex-col justify-between">
           <div>
-            <p className="text-[10px] font-black text-red-400 uppercase tracking-[0.2em] mb-4">
+            <p className="text-[10px] font-black text-[#ff7351] uppercase tracking-[0.2em] mb-4">
               Kritik Uyarı
             </p>
             <h3 className="text-xl font-bold text-white mb-2">
@@ -348,7 +338,7 @@ export function FailuresView({ failures }: { failures: Failure[] }) {
           {criticalCount > 0 && (
             <button
               onClick={() => handleFilterChange('failed')}
-              className="mt-6 text-xs font-bold text-red-400 flex items-center gap-2 hover:underline"
+              className="mt-6 text-xs font-bold text-[#ff7351] flex items-center gap-2 hover:underline"
             >
               LİSTEYİ GÖRÜNTÜLE
               <ArrowRight className="w-3.5 h-3.5" />
