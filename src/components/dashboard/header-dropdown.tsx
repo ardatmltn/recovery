@@ -74,14 +74,14 @@ export function HeaderDropdown({ email, initials, fullName }: Props) {
             <HelpCircle className="w-5 h-5" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52 bg-zinc-900 border-zinc-800 text-zinc-200">
-            <DropdownMenuItem className="hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer gap-2" asChild>
-              <a href="/dashboard/settings" className="flex items-center gap-2 px-2 py-1.5 text-sm">
+            <DropdownMenuItem className="hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer p-0">
+              <a href="/dashboard/settings" className="w-full px-2 py-1.5 text-sm">
                 {lang === 'tr' ? 'Ayarlar' : 'Settings'}
               </a>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-zinc-800" />
-            <DropdownMenuItem className="hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer" asChild>
-              <a href="mailto:support@recoverly.io" className="flex items-center gap-2 px-2 py-1.5 text-sm">
+            <DropdownMenuItem className="hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer p-0">
+              <a href="mailto:support@recoverly.io" className="w-full flex items-center gap-2 px-2 py-1.5 text-sm">
                 <ExternalLink className="w-3.5 h-3.5" />
                 {lang === 'tr' ? 'Destek' : 'Support'}
               </a>
