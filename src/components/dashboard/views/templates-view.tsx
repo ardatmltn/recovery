@@ -132,13 +132,13 @@ export function TemplatesView({ templates }: { templates: Template[] }) {
   const t = dashboardTranslations[lang].templates
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white">{t.title}</h1>
-        <p className="text-zinc-400 text-sm">{t.subtitle}</p>
+        <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2">{t.title}</h1>
+        <p className="text-zinc-500 text-sm">{t.subtitle}</p>
       </div>
 
-      <div className="flex items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-900/40 px-4 py-3">
+      <div className="flex items-start gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 px-5 py-4">
         <Info className="w-4 h-4 text-zinc-400 mt-0.5 shrink-0" />
         <p className="text-xs text-zinc-400 leading-relaxed">
           {t.availableVars}{' '}
