@@ -61,9 +61,7 @@ function N8nLogo() {
 function ResendLogo() {
   return (
     <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-black border border-zinc-700">
-      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white">
-        <path d="M3 3h8.5A5.5 5.5 0 0 1 17 8.5c0 2.13-1.22 3.98-3 4.9L17.88 21H14.5l-3.06-7H6v7H3V3zm3 3v5h5.5a2.5 2.5 0 0 0 0-5H6z"/>
-      </svg>
+      <span style={{ color: 'white', fontSize: '20px', fontWeight: 900, fontFamily: 'Arial, sans-serif', lineHeight: 1 }}>R</span>
     </div>
   )
 }
@@ -80,10 +78,8 @@ function StripeLogo() {
 
 function PaddleLogo() {
   return (
-    <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#0052cc]">
-      <svg viewBox="0 0 24 24" className="w-7 h-7" fill="white">
-        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 3c1.636 0 3.136.5 4.373 1.35L6.35 16.373A6.966 6.966 0 0 1 5 12c0-3.866 3.134-7 7-7zm0 14a6.966 6.966 0 0 1-4.373-1.35L17.65 7.627A6.966 6.966 0 0 1 19 12c0 3.866-3.134 7-7 7z"/>
-      </svg>
+    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: '#1a1a2e' }}>
+      <span style={{ color: '#00c247', fontSize: '22px', fontWeight: 900, fontFamily: 'Arial, sans-serif', lineHeight: 1 }}>P</span>
     </div>
   )
 }
