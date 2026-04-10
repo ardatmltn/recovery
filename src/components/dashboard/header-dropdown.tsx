@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Bell, HelpCircle, Search } from 'lucide-react'
+import { Bell, HelpCircle, Search, ExternalLink } from 'lucide-react'
 
 interface Props {
   email: string
@@ -49,17 +49,45 @@ export function HeaderDropdown({ email, initials, fullName }: Props) {
       {/* Right side */}
       <div className="flex items-center gap-5">
         {/* Notification bell */}
-        <button className="relative text-zinc-500 hover:text-white transition-colors">
-          <Bell className="w-5 h-5" />
-          {hasNotif && (
-            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full border-2 border-[#0e0e0e]" />
-          )}
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="relative text-zinc-500 hover:text-white transition-colors focus:outline-none">
+            <Bell className="w-5 h-5" />
+            {hasNotif && (
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#9fff88] rounded-full border-2 border-[#0e0e0e]" />
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-72 bg-zinc-900 border-zinc-800 text-zinc-200 p-0">
+            <div className="px-4 py-3 border-b border-zinc-800">
+              <p className="text-xs font-bold text-white uppercase tracking-widest">
+                {lang === 'tr' ? 'Bildirimler' : 'Notifications'}
+              </p>
+            </div>
+            <div className="px-4 py-8 text-center text-xs text-zinc-500">
+              {lang === 'tr' ? 'Yeni bildirim yok.' : 'No new notifications.'}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* Help */}
-        <button className="text-zinc-500 hover:text-white transition-colors">
-          <HelpCircle className="w-5 h-5" />
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="text-zinc-500 hover:text-white transition-colors focus:outline-none">
+            <HelpCircle className="w-5 h-5" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-52 bg-zinc-900 border-zinc-800 text-zinc-200">
+            <DropdownMenuItem className="hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer gap-2" asChild>
+              <a href="/dashboard/settings" className="flex items-center gap-2 px-2 py-1.5 text-sm">
+                {lang === 'tr' ? 'Ayarlar' : 'Settings'}
+              </a>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-zinc-800" />
+            <DropdownMenuItem className="hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer" asChild>
+              <a href="mailto:support@recoverly.io" className="flex items-center gap-2 px-2 py-1.5 text-sm">
+                <ExternalLink className="w-3.5 h-3.5" />
+                {lang === 'tr' ? 'Destek' : 'Support'}
+              </a>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* Language switcher */}
         <LanguageSwitcher />
