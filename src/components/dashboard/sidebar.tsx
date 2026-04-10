@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState, useEffect } from 'react'
 import {
   LayoutDashboard,
   AlertCircle,
@@ -11,41 +10,25 @@ import {
   Mail,
   BarChart3,
   Settings,
-  Zap,
-  ChevronsRight,
   Plug2,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { useLanguage } from '@/lib/language-context'
 import { dashboardTranslations } from '@/lib/dashboard-translations'
 
 export function Sidebar() {
   const pathname = usePathname()
-  const [open, setOpen] = useState(true)
   const { lang } = useLanguage()
   const t = dashboardTranslations[lang].sidebar
 
   const navItems = [
     { href: '/dashboard', label: t.overview, icon: LayoutDashboard, exact: true },
-    { href: '/dashboard/failures', label: t.failures, icon: AlertCircle, badge: true },
+    { href: '/dashboard/failures', label: t.failures, icon: AlertCircle },
     { href: '/dashboard/customers', label: t.customers, icon: Users },
     { href: '/dashboard/sequences', label: t.sequences, icon: GitBranch },
     { href: '/dashboard/templates', label: t.templates, icon: Mail },
     { href: '/dashboard/analytics', label: t.analytics, icon: BarChart3 },
     { href: '/dashboard/integrations', label: t.integrations, icon: Plug2 },
-    { href: '/dashboard/settings', label: t.settings, icon: Settings },
   ]
-
-  useEffect(() => {
-    const saved = localStorage.getItem('sidebar-open')
-    if (saved !== null) setOpen(saved === 'true')
-  }, [])
-
-  function toggle() {
-    const next = !open
-    setOpen(next)
-    localStorage.setItem('sidebar-open', String(next))
-  }
 
   function isActive(href: string, exact?: boolean) {
     if (exact) return pathname === href
@@ -53,89 +36,52 @@ export function Sidebar() {
   }
 
   return (
-    <aside
-      className={cn(
-        'relative shrink-0 border-r border-zinc-800 bg-[#09090B] flex flex-col h-full transition-all duration-300 ease-in-out',
-        open ? 'w-56' : 'w-[60px]'
-      )}
-    >
+    <aside className="h-screen w-64 fixed left-0 top-0 bg-[#131313] flex flex-col py-8 px-6 z-50 shadow-2xl shadow-[#9fff88]/5">
       {/* Logo */}
-      <Link href="/" className="h-14 flex items-center gap-2.5 px-[18px] border-b border-zinc-800 overflow-hidden hover:bg-zinc-900 transition-colors">
-        <div className="w-6 h-6 bg-green-500 rounded-md flex items-center justify-center shrink-0">
-          <Zap className="w-3.5 h-3.5 text-black" />
-        </div>
-        {open && (
-          <span className="font-display font-bold text-white text-base whitespace-nowrap transition-opacity duration-200">
-            Recoverly
-          </span>
-        )}
-      </Link>
+      <div className="mb-8">
+        <Link href="/">
+          <div className="text-2xl font-black tracking-tighter text-[#9fff88]">RECOVERLY</div>
+          <div className="text-[10px] font-bold tracking-[0.2em] text-zinc-500 uppercase mt-1">
+            Pulse of Precision
+          </div>
+        </Link>
+      </div>
 
       {/* Nav */}
-      <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-hidden">
-        {navItems.map(({ href, label, icon: Icon, exact, badge }) => {
+      <nav className="flex-1 space-y-1">
+        {navItems.map(({ href, label, icon: Icon, exact }) => {
           const active = isActive(href, exact)
           return (
             <Link
               key={href}
               href={href}
-              title={!open ? label : undefined}
-              className={cn(
-                'relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150',
-                open ? '' : 'justify-center px-0',
+              className={`flex items-center gap-3 py-3 px-4 text-sm font-medium transition-all duration-200 ${
                 active
-                  ? 'bg-zinc-800 text-white border-l-2 border-green-500'
-                  : 'text-zinc-500 hover:text-zinc-200 hover:bg-zinc-900'
-              )}
+                  ? 'text-[#9fff88] font-bold border-r-2 border-[#9fff88] bg-[#201f1f]'
+                  : 'text-zinc-500 hover:bg-[#201f1f] hover:text-[#9fff88]'
+              }`}
             >
-              <Icon className={cn('w-4 h-4 shrink-0', active ? 'text-green-400' : '')} />
-              {open && <span className="truncate">{label}</span>}
-              {badge && open && (
-                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-green-500/60 shrink-0" />
-              )}
-              {badge && !open && (
-                <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-green-500/60" />
-              )}
+              <Icon className="w-5 h-5 shrink-0" />
+              <span>{label}</span>
             </Link>
           )
         })}
       </nav>
 
-      {/* Plan badge */}
-      {open && (
-        <div className="px-3 pb-2">
-          <Link
-            href="/pricing"
-            className="block px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800 transition-colors group"
-          >
-            <p className="text-zinc-500 text-[10px] uppercase tracking-widest mb-0.5">{t.plan}</p>
-            <div className="flex items-center justify-between">
-              <p className="text-white text-xs font-semibold">Starter</p>
-              <span className="text-green-500 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity">{t.upgrade} →</span>
-            </div>
-          </Link>
-        </div>
-      )}
-
-      {/* Toggle button */}
-      <button
-        onClick={toggle}
-        className="border-t border-zinc-800 hover:bg-zinc-900 transition-colors"
-      >
-        <div className={cn('flex items-center p-3', !open && 'justify-center')}>
-          <div className="w-6 h-6 flex items-center justify-center shrink-0">
-            <ChevronsRight
-              className={cn(
-                'w-4 h-4 text-zinc-500 transition-transform duration-300',
-                open && 'rotate-180'
-              )}
-            />
-          </div>
-          {open && (
-            <span className="ml-2 text-sm font-medium text-zinc-500">{t.hide}</span>
-          )}
-        </div>
-      </button>
+      {/* Settings at bottom */}
+      <div className="pt-6 border-t border-zinc-800">
+        <Link
+          href="/dashboard/settings"
+          className={`flex items-center gap-3 py-3 px-4 text-sm font-medium transition-all duration-200 ${
+            pathname.startsWith('/dashboard/settings')
+              ? 'text-[#9fff88] font-bold border-r-2 border-[#9fff88] bg-[#201f1f]'
+              : 'text-zinc-500 hover:bg-[#201f1f] hover:text-[#9fff88]'
+          }`}
+        >
+          <Settings className="w-5 h-5 shrink-0" />
+          <span>{t.settings}</span>
+        </Link>
+      </div>
     </aside>
   )
 }

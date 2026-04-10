@@ -24,16 +24,16 @@ html, body {
   100% { transform: translateY(100vh); }
 }
 
-.animate-grid-move {
-  animation: grid-move 20s linear infinite;
-}
-
-.animate-scan-line {
-  animation: scan-line 8s linear infinite;
-}
-
-.animate-data-flow {
-  animation: data-flow linear infinite;
+@layer utilities {
+  .animate-grid-move {
+    animation: grid-move 20s linear infinite;
+  }
+  .animate-scan-line {
+    animation: scan-line 8s linear infinite;
+  }
+  .animate-data-flow {
+    animation: data-flow linear infinite;
+  }
 }
 
 @layer base {

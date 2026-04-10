@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <DottedSurfaceClient />
         <div className="relative z-[2] flex h-full w-full overflow-hidden">
           <Sidebar />
-          <div className="flex flex-col flex-1 overflow-hidden">
+          <div className="flex flex-col flex-1 overflow-hidden ml-64">
             <Header />
             <main className="flex-1 overflow-y-auto p-6">
               {children}
