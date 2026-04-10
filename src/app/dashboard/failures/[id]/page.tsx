@@ -13,7 +13,7 @@ export default async function FailureDetailPage({ params }: { params: Promise<{ 
 
   const { data: event } = await supabase
     .from('payment_events')
-    .select('provider_event_id, amount, currency, status, failure_code, failure_message, created_at, customers(name, email)')
+    .select('provider_event_id, amount, currency, status, failure_code, failure_message, created_at, customers(name, email, risk_score, total_recovered_amount)')
     .eq('id', id).eq('org_id', orgId).single()
 
   if (!event) notFound()
@@ -34,6 +34,13 @@ export default async function FailureDetailPage({ params }: { params: Promise<{ 
     message_templates: a.message_templates as { name: string; type: string } | null,
   }))
 
+  const customer = event.customers as {
+    name?: string
+    email?: string
+    risk_score?: number
+    total_recovered_amount?: number
+  } | null
+
   return (
     <FailureDetailView
       event={{
@@ -44,7 +51,7 @@ export default async function FailureDetailPage({ params }: { params: Promise<{ 
         failure_code: event.failure_code,
         failure_message: event.failure_message,
         created_at: event.created_at,
-        customers: event.customers as { name?: string; email?: string } | null,
+        customers: customer,
       }}
       attempts={mappedAttempts}
     />
