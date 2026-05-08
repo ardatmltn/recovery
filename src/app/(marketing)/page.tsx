@@ -31,9 +31,9 @@ function AnimatedBackground() {
     { left: '92%', duration: '9s', delay: '7s' },
   ]
   return (
-    <div className="absolute inset-0 overflow-hidden z-0 pointer-events-none">
+    <div className="absolute inset-0 overflow-hidden z-0 pointer-events-none select-none">
       <div
-        className="absolute inset-0 animate-grid-move"
+        className="absolute inset-0 animate-grid-move pointer-events-none"
         style={{
           backgroundImage:
             'linear-gradient(to right, rgba(0,255,0,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,255,0,0.05) 1px, transparent 1px)',
@@ -43,13 +43,13 @@ function AnimatedBackground() {
         }}
       />
       <div
-        className="absolute top-0 left-0 w-full h-0.5 animate-scan-line z-10"
+        className="absolute top-0 left-0 w-full h-0.5 animate-scan-line pointer-events-none"
         style={{ background: 'linear-gradient(90deg, transparent, rgba(0,255,0,0.2), transparent)' }}
       />
       {dataLines.map((line, i) => (
         <div
           key={i}
-          className="absolute w-px h-24 animate-data-flow"
+          className="absolute w-px h-24 animate-data-flow pointer-events-none"
           style={{
             left: line.left,
             animationDuration: line.duration,
@@ -113,13 +113,13 @@ export default function HomePage() {
         <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
           <AnimatedBackground />
           <div
-            className="absolute inset-0 z-0 opacity-30"
+            className="absolute inset-0 z-0 opacity-30 pointer-events-none"
             style={{
               backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(159,255,136,0.05) 1px, transparent 0)',
               backgroundSize: '40px 40px',
             }}
           />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-400/5 rounded-full blur-[120px] z-0" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-400/5 rounded-full blur-[120px] z-0 pointer-events-none" />
 
           <div className="relative z-10 max-w-7xl mx-auto px-8 grid lg:grid-cols-2 gap-16 items-center">
             <div className="flex flex-col gap-8">
