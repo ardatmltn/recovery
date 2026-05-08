@@ -3,7 +3,7 @@
 import { useLanguage } from '@/lib/language-context'
 import { dashboardTranslations } from '@/lib/dashboard-translations'
 import { formatCurrency, formatRelativeTime } from '@/lib/utils'
-import { TrendingUp, AlertTriangle, Timer, RefreshCw, Mail, Plus, MoreVertical, Download } from 'lucide-react'
+import { TrendingUp, AlertTriangle, Timer, RefreshCw, Mail, Plus, MoreVertical, Download, ShieldCheck, MessageSquare, Users } from 'lucide-react'
 import { SetupGuide } from '@/components/dashboard/setup-guide'
 import { RealtimeUpdater } from '@/components/dashboard/realtime-updater'
 import Link from 'next/link'
@@ -29,6 +29,8 @@ type Props = {
   activeFailures: number
   recoveredCount: number
   analyticsLength: number
+  sentMessages: number
+  atRiskCustomers: number
   recentFailures: RecentFailure[]
 }
 
@@ -70,10 +72,11 @@ function CustomerAvatar({ name, email }: { name?: string; email?: string }) {
 export function OverviewView({
   orgId, fullName, showSetupGuide, iyzicoConnected, n8nConfigured,
   totalRecovered, totalFailed, recoveryRate, activeFailures,
-  recoveredCount, analyticsLength, recentFailures,
+  recoveredCount, analyticsLength, sentMessages, atRiskCustomers, recentFailures,
 }: Props) {
   const { lang } = useLanguage()
   const t = dashboardTranslations[lang].overview
+  const m = t.metrics
 
   const retrySuccessRate = recoveredCount > 0 && activeFailures > 0
     ? Math.round((recoveredCount / (recoveredCount + activeFailures)) * 100)
@@ -89,48 +92,84 @@ export function OverviewView({
         <SetupGuide iyzicoConnected={iyzicoConnected} n8nConfigured={n8nConfigured} />
       )}
 
-      {/* Hero Summary */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-[#1a1919] p-8 rounded-xl relative overflow-hidden">
+      {/* 6 Metric Cards */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* 1. Korunan MRR — hero metric */}
+        <div className="bg-[#1a1919] p-6 rounded-xl relative overflow-hidden border border-[#9fff88]/10">
           <div className="absolute top-0 left-0 w-1 h-full bg-[#9fff88] shadow-[0_0_15px_rgba(159,255,136,0.5)]" />
-          <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase mb-2">
-            Kurtarılan Toplam
-          </p>
-          <h2 className="text-5xl font-black tracking-tight text-white mb-2">
+          <div className="flex items-start justify-between mb-3">
+            <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase">{m.protectedMrr}</p>
+            <ShieldCheck className="w-4 h-4 text-[#9fff88]" />
+          </div>
+          <h2 className="text-4xl font-black tracking-tight text-white mb-1">
             {formatCurrency(totalRecovered)}
           </h2>
-          <div className="flex items-center gap-2 text-[#9fff88] text-sm font-bold">
-            <TrendingUp className="w-4 h-4" />
-            <span>{t.metrics.fromLastMonth}</span>
-          </div>
+          <p className="text-xs text-[#9fff88] font-semibold">{m.protectedMrrDesc}</p>
         </div>
 
-        <div className="bg-[#1a1919] p-8 rounded-xl relative overflow-hidden">
+        {/* 2. Başarısız Tutar */}
+        <div className="bg-[#1a1919] p-6 rounded-xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-red-500/60" />
+          <div className="flex items-start justify-between mb-3">
+            <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase">{m.failedAmount}</p>
+            <AlertTriangle className="w-4 h-4 text-red-400" />
+          </div>
+          <h2 className="text-4xl font-black tracking-tight text-white mb-1">
+            {formatCurrency(totalFailed)}
+          </h2>
+          <p className="text-xs text-red-400 font-semibold">{m.failedAmountDesc}</p>
+        </div>
+
+        {/* 3. Kurtarma Oranı */}
+        <div className="bg-[#1a1919] p-6 rounded-xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-[#9fff88]/40" />
-          <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase mb-2">
-            Kurtarma Oranı
-          </p>
-          <h2 className="text-5xl font-black tracking-tight text-white mb-2">
+          <div className="flex items-start justify-between mb-3">
+            <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase">{m.recoveryRate}</p>
+            <TrendingUp className="w-4 h-4 text-[#9fff88]" />
+          </div>
+          <h2 className="text-4xl font-black tracking-tight text-white mb-1">
             {recoveryRate}%
           </h2>
-          <div className="flex items-center gap-2 text-[#9fff88] text-sm font-bold">
-            <span className="text-lg">⚡</span>
-            <span>Sektör ortalamasının üzerinde</span>
-          </div>
+          <p className="text-xs text-[#9fff88]/70 font-semibold">{m.recoveryRateDesc}</p>
         </div>
 
-        <div className="bg-[#1a1919] p-8 rounded-xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-1 h-full bg-red-500 shadow-[0_0_15px_rgba(255,115,81,0.5)]" />
-          <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase mb-2">
-            Aktif Hatalar
-          </p>
-          <h2 className="text-5xl font-black tracking-tight text-white mb-2">
+        {/* 4. Gönderilen Mesaj */}
+        <div className="bg-[#1a1919] p-6 rounded-xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-zinc-600" />
+          <div className="flex items-start justify-between mb-3">
+            <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase">{m.sentMessages}</p>
+            <MessageSquare className="w-4 h-4 text-zinc-400" />
+          </div>
+          <h2 className="text-4xl font-black tracking-tight text-white mb-1">
+            {sentMessages}
+          </h2>
+          <p className="text-xs text-zinc-500 font-semibold">{m.sentMessagesDesc}</p>
+        </div>
+
+        {/* 5. Riskli Müşteri */}
+        <div className="bg-[#1a1919] p-6 rounded-xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-amber-500/60" />
+          <div className="flex items-start justify-between mb-3">
+            <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase">{m.atRiskCustomers}</p>
+            <Users className="w-4 h-4 text-amber-400" />
+          </div>
+          <h2 className="text-4xl font-black tracking-tight text-white mb-1">
+            {atRiskCustomers}
+          </h2>
+          <p className="text-xs text-amber-400/80 font-semibold">{m.atRiskCustomersDesc}</p>
+        </div>
+
+        {/* 6. Aktif Başarısız */}
+        <div className="bg-[#1a1919] p-6 rounded-xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-red-500 shadow-[0_0_15px_rgba(255,115,81,0.3)]" />
+          <div className="flex items-start justify-between mb-3">
+            <p className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase">{m.activeFailures}</p>
+            <Timer className="w-4 h-4 text-red-400" />
+          </div>
+          <h2 className="text-4xl font-black tracking-tight text-white mb-1">
             {activeFailures}
           </h2>
-          <div className="flex items-center gap-2 text-red-400 text-sm font-bold">
-            <AlertTriangle className="w-4 h-4" />
-            <span>Müdahale bekliyor</span>
-          </div>
+          <p className="text-xs text-red-400/80 font-semibold">{m.activeFailuresDesc}</p>
         </div>
       </section>
 
@@ -180,70 +219,40 @@ export function OverviewView({
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="bg-[#201f1f] rounded-xl p-8 space-y-8">
-          <h3 className="text-xl font-extrabold text-white">Hızlı İstatistikler</h3>
+        {/* Recovery Performance */}
+        <div className="bg-[#201f1f] rounded-xl p-8 space-y-6">
+          <h3 className="text-xl font-extrabold text-white">{t.quickStats}</h3>
 
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[#262626] flex items-center justify-center text-[#9fff88]">
-                  <Timer className="w-5 h-5" />
+          <div className="space-y-5">
+            {[
+              { icon: RefreshCw, label: lang === 'tr' ? 'Tekrar Deneme Başarısı' : 'Retry Success', value: `${retrySuccessRate}%`, pct: retrySuccessRate },
+              { icon: Mail, label: lang === 'tr' ? 'E-posta Etkileşimi' : 'Email Engagement', value: `${emailEngagement}%`, pct: emailEngagement },
+              { icon: TrendingUp, label: lang === 'tr' ? 'Kurtarma Oranı' : 'Recovery Rate', value: `${recoveryRate}%`, pct: recoveryRate },
+            ].map(({ icon: Icon, label, value, pct }) => (
+              <div key={label} className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-lg bg-[#262626] flex items-center justify-center text-[#9fff88] shrink-0">
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs text-zinc-500 font-medium truncate">{label}</p>
+                    <p className="text-base font-bold text-white">{value}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs text-zinc-500 font-medium">Aktif Başarısızlık</p>
-                  <p className="text-lg font-bold text-white">{activeFailures}</p>
-                </div>
-              </div>
-              <div className="h-1.5 w-12 bg-[#262626] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-[#9fff88] rounded-full"
-                  style={{ width: `${Math.min(activeFailures * 2, 100)}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[#262626] flex items-center justify-center text-[#9fff88]">
-                  <RefreshCw className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-500 font-medium">Tekrar Deneme Başarısı</p>
-                  <p className="text-lg font-bold text-white">{retrySuccessRate}%</p>
+                <div className="h-1.5 w-16 bg-[#262626] rounded-full overflow-hidden shrink-0">
+                  <div className="h-full bg-[#9fff88] rounded-full" style={{ width: `${pct}%` }} />
                 </div>
               </div>
-              <div className="h-1.5 w-12 bg-[#262626] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-[#9fff88] rounded-full"
-                  style={{ width: `${retrySuccessRate}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[#262626] flex items-center justify-center text-[#9fff88]">
-                  <Mail className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-500 font-medium">E-posta Etkileşimi</p>
-                  <p className="text-lg font-bold text-white">{emailEngagement}%</p>
-                </div>
-              </div>
-              <div className="h-1.5 w-12 bg-[#262626] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-[#9fff88] rounded-full"
-                  style={{ width: `${emailEngagement}%` }}
-                />
-              </div>
-            </div>
+            ))}
           </div>
 
-          <button className="w-full py-4 bg-[#9fff88] text-black font-black rounded-xl flex items-center justify-center gap-2 hover:bg-[#8aee72] active:scale-95 transition-all shadow-lg shadow-[#9fff88]/20">
+          <Link
+            href="/dashboard/analytics"
+            className="w-full py-3.5 bg-[#9fff88] text-black font-black rounded-xl flex items-center justify-center gap-2 hover:bg-[#8aee72] active:scale-95 transition-all shadow-lg shadow-[#9fff88]/20 text-sm"
+          >
             <Download className="w-4 h-4" />
-            RAPORU İNDİR
-          </button>
+            {lang === 'tr' ? 'TAM ANALİTİK' : 'FULL ANALYTICS'}
+          </Link>
         </div>
       </div>
 

@@ -38,6 +38,18 @@ export default async function DashboardPage() {
     .from('payment_events').select('*', { count: 'exact', head: true })
     .eq('org_id', orgId).eq('status', 'recovered')
 
+  const { count: sentMessages } = await supabase
+    .from('recovery_attempts').select('*', { count: 'exact', head: true })
+    .eq('org_id', orgId)
+    .in('type', ['email', 'sms'])
+    .gte('executed_at', thirtyDaysAgo.toISOString())
+
+  const { data: atRiskRaw } = await supabase
+    .from('payment_events').select('customer_id')
+    .eq('org_id', orgId).in('status', ['new', 'processing'])
+
+  const atRiskCustomers = new Set((atRiskRaw ?? []).map(r => r.customer_id)).size
+
   const showSetupGuide =
     !org?.iyzico_connected || !org?.n8n_webhook_url ||
     (activeFailures === 0 && (!analytics || analytics.length === 0))
@@ -64,6 +76,8 @@ export default async function DashboardPage() {
       activeFailures={activeFailures ?? 0}
       recoveredCount={recoveredCount ?? 0}
       analyticsLength={analytics?.length ?? 0}
+      sentMessages={sentMessages ?? 0}
+      atRiskCustomers={atRiskCustomers}
       recentFailures={failures}
     />
   )

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
-import { CheckCircle2, Loader2, ArrowRight, Zap, Plug, Webhook, CreditCard } from 'lucide-react'
+import { CheckCircle2, Loader2, ArrowRight, Zap, Plug, Webhook, CreditCard, Clock } from 'lucide-react'
 import { useLanguage } from '@/lib/language-context'
 import { dashboardTranslations } from '@/lib/dashboard-translations'
 
@@ -99,17 +99,23 @@ export function SetupGuide({ iyzicoConnected, n8nConfigured }: Props) {
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 backdrop-blur-sm p-5">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0">
             <Zap className="w-3.5 h-3.5 text-green-400" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">{t.title}</p>
-            <p className="text-[11px] text-zinc-400">{t.stepsCompleted(completedCount)}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-semibold text-white">{t.title}</p>
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 text-[9px] font-bold text-green-400 uppercase tracking-wider">
+                <Clock className="w-2.5 h-2.5" />
+                15 dk
+              </span>
+            </div>
+            <p className="text-[11px] text-zinc-500 mt-0.5 max-w-xs">{t.subtitle}</p>
           </div>
         </div>
-        <span className="text-xs font-bold text-zinc-400">{progressPct}%</span>
+        <span className="text-xs font-bold text-zinc-400 shrink-0">{progressPct}%</span>
       </div>
 
       {/* Progress bar */}

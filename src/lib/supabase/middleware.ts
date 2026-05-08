@@ -3,6 +3,15 @@ import { NextResponse, type NextRequest } from 'next/server'
 import type { Database } from '@/types/database'
 
 export async function updateSession(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/register')
+  const isDashboardRoute = pathname.startsWith('/dashboard')
+
+  // Public routes (marketing, pricing, API webhooks) — skip Supabase auth entirely
+  if (!isAuthRoute && !isDashboardRoute) {
+    return NextResponse.next({ request })
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient<Database>(
@@ -25,10 +34,6 @@ export async function updateSession(request: NextRequest) {
   )
 
   const { data: { user } } = await supabase.auth.getUser()
-
-  const pathname = request.nextUrl.pathname
-  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/register')
-  const isDashboardRoute = pathname.startsWith('/dashboard')
 
   if (isDashboardRoute && !user) {
     const url = request.nextUrl.clone()

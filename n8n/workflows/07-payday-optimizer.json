@@ -11,7 +11,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Calculate optimal retry time based on failure code and day of week\nconst attempt = $input.first().json;\nconst failureCode = attempt.failure_code || '';\nconst now = new Date();\nconst hour = now.getHours();\nconst dayOfWeek = now.getDay(); // 0=Sun, 6=Sat\n\n// Optimal retry windows: weekdays 10am-12pm or 6pm-8pm\nlet delayHours = 4; // default\n\nif (failureCode === 'insufficient_funds') {\n  // Retry near payday: 1st and 15th of month\n  const today = now.getDate();\n  const nextPayday = today < 15 ? 15 : new Date(now.getFullYear(), now.getMonth() + 1, 1).getDate();\n  const daysUntilPayday = nextPayday - today;\n  delayHours = daysUntilPayday * 24 + 10; // 10am on payday\n} else if (failureCode === 'card_declined') {\n  delayHours = 24; // retry next day\n} else if (failureCode === 'expired_card') {\n  delayHours = 2; // quick email to update card\n} else {\n  // Avoid weekends for retries\n  if (dayOfWeek === 5) delayHours = 72; // Friday → Monday\n  else if (dayOfWeek === 6) delayHours = 48; // Saturday → Monday\n  else if (hour < 9) delayHours = 9 - hour; // wait until 9am\n  else if (hour > 20) delayHours = 24 - hour + 9; // wait until next day 9am\n}\n\nreturn [{ json: { ...attempt, optimal_delay_hours: delayHours } }];"
+        "jsCode": "// Calculate optimal retry time based on failure code and reschedule the attempt.\n// Input must include: { id, failure_code }\nconst attempt = $input.first().json;\nconst failureCode = attempt.failure_code || '';\nconst now = new Date();\nconst dayOfWeek = now.getDay(); // 0=Sun, 6=Sat\nconst hour = now.getHours();\n\nlet delayHours = 4; // default\n\nif (failureCode === 'insufficient_funds') {\n  // Retry near payday: 1st or 15th of month\n  const today = now.getDate();\n  let nextPayday;\n  if (today < 15) {\n    nextPayday = new Date(now.getFullYear(), now.getMonth(), 15);\n  } else {\n    nextPayday = new Date(now.getFullYear(), now.getMonth() + 1, 1);\n  }\n  nextPayday.setHours(10, 0, 0, 0);\n  delayHours = Math.max(1, Math.ceil((nextPayday - now) / 3600000));\n} else if (failureCode === 'card_declined') {\n  delayHours = 24;\n} else if (failureCode === 'expired_card') {\n  delayHours = 2;\n} else {\n  // Avoid weekends\n  if (dayOfWeek === 5) delayHours = 72;      // Friday → Monday\n  else if (dayOfWeek === 6) delayHours = 48; // Saturday → Monday\n  else if (hour < 9) delayHours = 9 - hour;\n  else if (hour > 20) delayHours = 24 - hour + 9;\n}\n\nconst scheduledAt = new Date(now.getTime() + delayHours * 3600000).toISOString();\n\nreturn [{ json: { id: attempt.id, scheduled_at: scheduledAt } }];"
       },
       "id": "calculate-optimal-time",
       "name": "Calculate Optimal Retry Time",
@@ -21,10 +21,8 @@
     },
     {
       "parameters": {
-        "operation": "update",
-        "table": "recovery_attempts",
-        "updateKey": "id",
-        "columns": "scheduled_at"
+        "operation": "executeQuery",
+        "query": "UPDATE recovery_attempts SET scheduled_at = '{{$json.scheduled_at}}' WHERE id = '{{$json.id}}' AND status = 'scheduled'"
       },
       "id": "update-schedule",
       "name": "Update Retry Schedule",

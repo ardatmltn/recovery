@@ -140,9 +140,9 @@ export function Hero() {
 
                 <div className="space-y-2.5">
                   {[
-                    { label: tx.card.retry, value: '$11,240', pct: 46 },
-                    { label: tx.card.email, value: '$8,890', pct: 37 },
-                    { label: tx.card.sms, value: '$4,050', pct: 17 },
+                    { label: tx.card.failed, value: '$11,240', pct: 46 },
+                    { label: tx.card.recovered, value: '$8,890', pct: 37 },
+                    { label: tx.card.savedLabel, value: '$4,050', pct: 17 },
                   ].map(({ label, value, pct }) => (
                     <div key={label} className="flex items-center gap-2.5">
                       <span className="text-zinc-500 text-[11px] w-28 shrink-0">{label}</span>
