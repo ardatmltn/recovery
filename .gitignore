@@ -42,3 +42,7 @@ next-env.d.ts
 # Claude personal overrides (gitignored)
 CLAUDE.local.md
 .claude/settings.local.json
+
+# Graphify output
+graphify-out/
+.graphify_python
