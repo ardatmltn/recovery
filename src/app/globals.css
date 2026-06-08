@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  background: #09090B;
-}
-
 /* Stitch landing page animations */
 @keyframes grid-move {
   0% { background-position: 0 0; }
@@ -50,13 +46,13 @@ html, body {
     --secondary-foreground: 240 6% 10%;
     --muted: 240 5% 96%;
     --muted-foreground: 240 4% 46%;
-    --accent: 142 72% 42%;
-    --accent-foreground: 0 0% 0%;
+    --accent: var(--primary);
+    --accent-foreground: var(--primary-foreground);
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 240 6% 90%;
     --input: 240 6% 90%;
-    --ring: 142 72% 42%;
+    --ring: var(--primary);
     --radius: 0.75rem;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -78,13 +74,13 @@ html, body {
     --secondary-foreground: 0 0% 98%;
     --muted: 240 5% 14%;
     --muted-foreground: 240 5% 55%;
-    --accent: 142 72% 42%;
-    --accent-foreground: 0 0% 0%;
+    --accent: var(--primary);
+    --accent-foreground: var(--primary-foreground);
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 100%;
     --border: 240 5% 16%;
     --input: 240 5% 16%;
-    --ring: 142 72% 42%;
+    --ring: var(--primary);
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
