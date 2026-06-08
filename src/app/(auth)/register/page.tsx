@@ -47,88 +47,92 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#09090B] flex items-center justify-center px-4">
+    <div style={{ minHeight: '100vh', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 16px' }}>
       <div
-        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: 'radial-gradient(circle, #27272a 1px, transparent 1px)',
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          backgroundImage: 'radial-gradient(circle, #1f1f1f 1px, transparent 1px)',
           backgroundSize: '28px 28px',
-          opacity: 0.3,
         }}
       />
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-green-500/[0.04] blur-[100px] pointer-events-none" />
+      <div style={{
+        position: 'absolute', top: '33%', left: '50%', transform: 'translateX(-50%)',
+        width: 600, height: 400, borderRadius: '50%',
+        background: 'radial-gradient(ellipse, rgba(159,255,136,0.06) 0%, transparent 70%)',
+        pointerEvents: 'none', filter: 'blur(40px)',
+      }} />
 
-      <div className="relative w-full max-w-sm">
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-7 h-7 bg-green-500 rounded-md flex items-center justify-center">
-            <Zap className="w-4 h-4 text-black" />
+      <div style={{ position: 'relative', width: '100%', maxWidth: 380 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 32 }}>
+          <div style={{ width: 28, height: 28, background: '#9fff88', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Zap size={15} color="#000" />
           </div>
-          <span className="font-display font-bold text-white text-lg">Recoverly</span>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: '#fff', fontSize: 18 }}>Recoverly</span>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
-          <h1 className="font-display font-bold text-white text-2xl mb-1">Create account</h1>
-          <p className="text-zinc-500 text-sm mb-6">Start recovering failed payments in minutes</p>
+        <div style={{ background: '#131313', border: '1px solid #242424', borderRadius: 20, padding: 32 }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: '#fff', fontSize: 22, marginBottom: 4 }}>Create account</h1>
+          <p style={{ color: '#6b6b6b', fontSize: 13, marginBottom: 24 }}>Start recovering failed payments in minutes</p>
 
-          <form onSubmit={handleRegister} className="space-y-4">
-            <div>
-              <label className="text-zinc-400 text-xs font-medium block mb-1.5">Full name</label>
-              <input
-                placeholder="Jane Smith"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-                className="w-full px-3.5 py-2.5 bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-green-500/50 focus:ring-1 focus:ring-green-500/20 rounded-xl text-white text-sm placeholder:text-zinc-600 outline-none transition-colors"
-              />
-            </div>
-            <div>
-              <label className="text-zinc-400 text-xs font-medium block mb-1.5">Company / Product name</label>
-              <input
-                placeholder="Acme Inc."
-                value={orgName}
-                onChange={(e) => setOrgName(e.target.value)}
-                required
-                className="w-full px-3.5 py-2.5 bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-green-500/50 focus:ring-1 focus:ring-green-500/20 rounded-xl text-white text-sm placeholder:text-zinc-600 outline-none transition-colors"
-              />
-            </div>
-            <div>
-              <label className="text-zinc-400 text-xs font-medium block mb-1.5">Email</label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-3.5 py-2.5 bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-green-500/50 focus:ring-1 focus:ring-green-500/20 rounded-xl text-white text-sm placeholder:text-zinc-600 outline-none transition-colors"
-              />
-            </div>
-            <div>
-              <label className="text-zinc-400 text-xs font-medium block mb-1.5">Password</label>
-              <input
-                type="password"
-                placeholder="At least 8 characters"
-                minLength={8}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-3.5 py-2.5 bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-green-500/50 focus:ring-1 focus:ring-green-500/20 rounded-xl text-white text-sm placeholder:text-zinc-600 outline-none transition-colors"
-              />
-            </div>
-            {error && <p className="text-red-400 text-xs">{error}</p>}
+          <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {[
+              { label: 'Full name', type: 'text', placeholder: 'Jane Smith', value: fullName, onChange: setFullName },
+              { label: 'Company / Product name', type: 'text', placeholder: 'Acme Inc.', value: orgName, onChange: setOrgName },
+              { label: 'Email', type: 'email', placeholder: 'you@example.com', value: email, onChange: setEmail },
+              { label: 'Password', type: 'password', placeholder: 'At least 8 characters', value: password, onChange: setPassword },
+            ].map(({ label, type, placeholder, value, onChange }) => (
+              <div key={label}>
+                <label style={{ color: '#8a8a8a', fontSize: 11, fontWeight: 500, display: 'block', marginBottom: 6, letterSpacing: '0.02em' }}>
+                  {label}
+                </label>
+                <input
+                  type={type}
+                  placeholder={placeholder}
+                  value={value}
+                  onChange={(e) => onChange(e.target.value)}
+                  required
+                  minLength={type === 'password' ? 8 : undefined}
+                  style={{
+                    width: '100%', padding: '10px 14px', boxSizing: 'border-box',
+                    background: '#1a1a1a', border: '1px solid #2a2a2a',
+                    borderRadius: 12, color: '#fff', fontSize: 13,
+                    outline: 'none', transition: 'border-color 0.15s',
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = 'rgba(159,255,136,0.4)'}
+                  onBlur={(e) => e.target.style.borderColor = '#2a2a2a'}
+                />
+              </div>
+            ))}
+
+            {error && <p style={{ color: '#ff7351', fontSize: 12 }}>{error}</p>}
+
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-green-500 hover:bg-green-400 text-black font-semibold rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              style={{
+                width: '100%', padding: '11px 0', marginTop: 4,
+                background: loading ? '#6abf5a' : '#9fff88',
+                border: 'none', borderRadius: 12,
+                color: '#000', fontWeight: 700, fontSize: 13,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={(e) => { if (!loading) (e.target as HTMLButtonElement).style.background = '#b8ffaa' }}
+              onMouseLeave={(e) => { if (!loading) (e.target as HTMLButtonElement).style.background = '#9fff88' }}
             >
-              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              {loading && <Loader2 size={14} className="animate-spin" />}
               {loading ? 'Creating account…' : 'Create account'}
             </button>
           </form>
         </div>
 
-        <p className="text-zinc-600 text-sm text-center mt-5">
+        <p style={{ color: '#4a4a4a', fontSize: 13, textAlign: 'center', marginTop: 20 }}>
           Already have an account?{' '}
-          <Link href="/login" className="text-zinc-400 hover:text-white transition-colors">
+          <Link href="/login" style={{ color: '#8a8a8a', textDecoration: 'none', transition: 'color 0.15s' }}
+            onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#fff'}
+            onMouseLeave={(e) => (e.target as HTMLElement).style.color = '#8a8a8a'}
+          >
             Sign in
           </Link>
         </p>
